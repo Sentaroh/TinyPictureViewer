@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:ignore="HardcodedText,Orientation,RtlHardcoded" >
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/scan_folder_list_item_delete_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/msgs_main_edit_scan_folder_to_delete_directory" />
+
+            <TextView
+                android:id="@+id/scan_folder_list_item_scan_folder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="/sdcard/Pictures"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/scan_folder_list_item_process_sub_diretories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="@string/msgs_main_edit_scan_folder_process_sub_directories" />
+
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/scan_folder_list_item_rg_select_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:orientation="vertical" >
+
+        <RadioButton
+            android:id="@+id/scan_folder_list_item_rb_select_type_include"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/msgs_main_edit_scan_folder_select_include" />
+
+        <RadioButton
+            android:id="@+id/scan_folder_list_item_rb_select_type_exclude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/msgs_main_edit_scan_folder_select_exclude" />
+    </RadioGroup>
+
+</LinearLayout>
