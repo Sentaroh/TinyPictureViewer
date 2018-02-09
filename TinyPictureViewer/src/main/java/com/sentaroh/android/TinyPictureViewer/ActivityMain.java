@@ -39,6 +39,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -56,6 +57,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -64,6 +66,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -676,7 +679,8 @@ public class ActivityMain extends AppCompatActivity {
     		mGp.folderView.setVisibility(LinearLayout.GONE);
     		mGp.thumbnailView.setVisibility(LinearLayout.GONE);
     		mGp.pictureView.setVisibility(LinearLayout.GONE);
-    		String file_path=ContentProviderUtil.getFilePath(mContext, cd, intent.getData());
+
+            String file_path=ContentProviderUtil.getFilePath(mContext, cd, intent.getData());
     		if (file_path!=null) {
     			if (PictureUtil.isPictureFile(mGp, file_path)) {
         			mGp.showedPictureList.clear();
