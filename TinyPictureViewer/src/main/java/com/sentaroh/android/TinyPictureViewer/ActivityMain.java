@@ -724,7 +724,9 @@ public class ActivityMain extends AppCompatActivity {
     			} else {
     				result=false;
     			}
-    		}
+    		} else {
+                result=false;
+            }
 		};
 		return result;
 	};
