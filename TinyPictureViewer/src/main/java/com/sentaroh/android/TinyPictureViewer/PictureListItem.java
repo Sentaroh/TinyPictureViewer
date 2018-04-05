@@ -556,25 +556,25 @@ public class PictureListItem implements Externalizable, Comparable<PictureListIt
 
 	private void setGpsInfo(String latitude_val, String latitude_ref, String longitude_val, String longitude_ref) {
 		String[]longitude_part=longitude_val.split(" ");
-		String[]longitude_d=longitude_part[0].split("/");
-		String[]longitude_m=longitude_part[1].split("/");
-		String[]longitude_s=longitude_part[2].split("/");
-		Double longitude=Double.parseDouble(longitude_d[0])/Double.parseDouble(longitude_d[1])+
-				Double.parseDouble(longitude_m[0])/Double.parseDouble(longitude_m[1])/60d+
-				Double.parseDouble(longitude_s[0])/Double.parseDouble(longitude_s[1])/3600d;
-		if (longitude_ref.equals("W")) setExifGpsLongitude(-1d*longitude);
-		else setExifGpsLongitude(longitude);
-		String[]latitude_part=latitude_val.split(" ");
-		String[]latitude_d=latitude_part[0].split("/");
-		String[]latitude_m=latitude_part[1].split("/");
-		String[]latitude_s=latitude_part[2].split("/");
-		Double latitude=Double.parseDouble(latitude_d[0])/Double.parseDouble(latitude_d[1])+
-				Double.parseDouble(latitude_m[0])/Double.parseDouble(latitude_m[1])/60d+
-				Double.parseDouble(latitude_s[0])/Double.parseDouble(latitude_s[1])/3600d;
-		if (latitude_ref.equals("S")) setExifGpsLatitude(-1d*latitude);
-		else setExifGpsLatitude(latitude);
-//		Log.v("","longitude="+longitude_val+", latitude="+latitude_val);
-//		Log.v("","longitude="+getExifGpsLongitude()+", latitude="+getExifGpsLatitude());
+		if (longitude_part.length>=3) {
+            String[]longitude_d=longitude_part[0].split("/");
+            String[]longitude_m=longitude_part[1].split("/");
+            String[]longitude_s=longitude_part[2].split("/");
+            Double longitude=Double.parseDouble(longitude_d[0])/Double.parseDouble(longitude_d[1])+
+                    Double.parseDouble(longitude_m[0])/Double.parseDouble(longitude_m[1])/60d+
+                    Double.parseDouble(longitude_s[0])/Double.parseDouble(longitude_s[1])/3600d;
+            if (longitude_ref.equals("W")) setExifGpsLongitude(-1d*longitude);
+            else setExifGpsLongitude(longitude);
+            String[]latitude_part=latitude_val.split(" ");
+            String[]latitude_d=latitude_part[0].split("/");
+            String[]latitude_m=latitude_part[1].split("/");
+            String[]latitude_s=latitude_part[2].split("/");
+            Double latitude=Double.parseDouble(latitude_d[0])/Double.parseDouble(latitude_d[1])+
+                    Double.parseDouble(latitude_m[0])/Double.parseDouble(latitude_m[1])/60d+
+                    Double.parseDouble(latitude_s[0])/Double.parseDouble(latitude_s[1])/3600d;
+            if (latitude_ref.equals("S")) setExifGpsLatitude(-1d*latitude);
+            else setExifGpsLatitude(latitude);
+        }
 	}
 	
 	final private void editExifInfoByMetaDataExtractor(boolean createThumbnail, 
