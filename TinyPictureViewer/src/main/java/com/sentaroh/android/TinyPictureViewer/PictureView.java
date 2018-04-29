@@ -124,8 +124,8 @@ public class PictureView {
 
 	}
 	
-	public SavedViewContents saveViewContents() {
-		SavedViewContents sv=new SavedViewContents();
+	public ViewSaveObjects saveViewContents() {
+		ViewSaveObjects sv=new ViewSaveObjects();
 		
 		sv.picture_view_pos_x=mGp.customViewPager.getCurrentItem();
 		sv.picture_view_file_name=mGp.pictureViewFileName.getText().toString();
@@ -141,7 +141,7 @@ public class PictureView {
 		return sv;
 	};
 
-	public void restoreViewContents(SavedViewContents sv) {
+	public void restoreViewContents(ViewSaveObjects sv) {
 		mGp.pictureViewFileName.setText(sv.picture_view_file_name);
 		mGp.pictureViewFileInfo.setText(sv.picture_view_info);
 		mGp.pictureViewZoomRatio.setText(sv.picture_view_zoom);

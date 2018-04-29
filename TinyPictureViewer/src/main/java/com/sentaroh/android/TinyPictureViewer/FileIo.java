@@ -21,7 +21,7 @@ public class FileIo {
 
 	static public void scanMediaFile(GlobalParameters gp, CommonUtilities util, String fp) {
 		MediaScannerConnection.scanFile(gp.appContext, new String[]{fp}, null, null);
-		if (gp.settingDebugLevel>=2) util.addDebugMsg(2, "I","Media scanner invoked, name="+fp);
+		util.addDebugMsg(2, "I","Media scanner invoked, name=",fp);
 	};
 
 	static public int deleteMediaStoreItem(Context c, String fp) {
