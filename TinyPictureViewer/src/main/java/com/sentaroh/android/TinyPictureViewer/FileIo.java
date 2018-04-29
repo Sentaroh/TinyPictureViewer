@@ -84,7 +84,7 @@ public class FileIo {
 			if (!tc.isEnabled()) break;
 			try {
 				in_file=new File(f_path);
-				out_file_tmp=new File(to_dir+"/"+in_file.getName()+".tmp");
+				out_file_tmp=new File(gp.internalRootDirectory+gp.appSpecificDirectory+"/temp_file.tmp");
 				FileInputStream fis=new FileInputStream(in_file);
 				FileOutputStream fos=new FileOutputStream(out_file_tmp);
 				byte[] buff=new byte[BUFFER_SIZE];

@@ -39,7 +39,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -57,7 +56,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -66,7 +64,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -2752,11 +2749,12 @@ public class ActivityMain extends AppCompatActivity {
             		}
             		mGp.contextButtonThumbnailCopyView.setVisibility(LinearLayout.VISIBLE);
             	} else {
-            		mGp.contextButtonThumbnailRenameView.setVisibility(LinearLayout.INVISIBLE);
             		if (enable_file_mod)  {
+                        mGp.contextButtonThumbnailRenameView.setVisibility(LinearLayout.VISIBLE);
             			mGp.contextButtonThumbnailDeleteView.setVisibility(LinearLayout.VISIBLE);
             			mGp.contextButtonThumbnailCutView.setVisibility(LinearLayout.VISIBLE);
             		} else {
+                        mGp.contextButtonThumbnailRenameView.setVisibility(LinearLayout.INVISIBLE);
             			mGp.contextButtonThumbnailDeleteView.setVisibility(LinearLayout.INVISIBLE);
             			mGp.contextButtonThumbnailCutView.setVisibility(LinearLayout.INVISIBLE);
             		}
@@ -2793,7 +2791,7 @@ public class ActivityMain extends AppCompatActivity {
 
     };
 
-    private void confirmThumbnailViewRename() {
+    private void confirmSingleThumbnailViewRename() {
 		final Dialog dialog = new Dialog(mActivity);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.single_item_input_dlg);
@@ -2924,7 +2922,140 @@ public class ActivityMain extends AppCompatActivity {
 		});
 		dialog.show();
 
-    };
+    }
+
+    private void confirmMultiThumbnailViewRename() {
+        final Dialog dialog = new Dialog(mActivity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.single_item_input_dlg);
+        final LinearLayout dlg_view = (LinearLayout) dialog.findViewById(R.id.single_item_input_dlg_view);
+        dlg_view.setBackgroundResource(R.drawable.dialog_border_dark);
+
+        final LinearLayout title_view = (LinearLayout) dialog.findViewById(R.id.single_item_input_title_view);
+        title_view.setBackgroundColor(mGp.themeColorList.dialog_title_background_color);
+        final TextView dlg_title = (TextView) dialog.findViewById(R.id.single_item_input_title);
+        dlg_title.setTextColor(mGp.themeColorList.text_color_dialog_title);
+        dlg_title.setText(mContext.getString(R.string.msgs_main_file_rename_title));
+        final TextView dlg_msg = (TextView) dialog.findViewById(R.id.single_item_input_msg);
+        final TextView dlg_cmp = (TextView) dialog.findViewById(R.id.single_item_input_name);
+        final Button btnOk = (Button) dialog.findViewById(R.id.single_item_input_ok_btn);
+        final Button btnCancel = (Button) dialog.findViewById(R.id.single_item_input_cancel_btn);
+        final EditText etDir=(EditText) dialog.findViewById(R.id.single_item_input_dir);
+        dlg_cmp.setVisibility(TextView.GONE);
+
+        PictureListItem w_pli=null;
+        for(int i=0;i<mGp.adapterThumbnailView.getCount();i++) {
+            if (mGp.adapterThumbnailView.getItem(i).isSelected()) {
+                w_pli=mGp.adapterThumbnailView.getItem(i);
+                break;
+            }
+        }
+        final PictureListItem pli=w_pli;
+
+        CommonDialog.setDlgBoxSizeCompact(dialog);
+        btnOk.setEnabled(false);
+        etDir.addTextChangedListener(new TextWatcher(){
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length()>0) {
+                    String n_path=pli.getParentDirectory()+"/"+s.toString();
+                    File lf=new File(n_path);
+//					Log.v("","fp="+lf.getPath());
+                    if (lf.exists()) {
+                        btnOk.setEnabled(false);
+                        dlg_msg.setText(mContext.getString(R.string.msgs_single_item_input_dlg_duplicate_dir));
+                    } else {
+                        btnOk.setEnabled(true);
+                        dlg_msg.setText("");
+                    }
+                }
+            }
+        });
+        etDir.setText(pli.getFileName().substring(0,pli.getFileName().lastIndexOf(".")));
+
+        //OK button
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                final String new_file_name=etDir.getText().toString()+pli.getFileName().substring(pli.getFileName().lastIndexOf("."));
+                final String new_name=pli.getParentDirectory()+"/"+new_file_name;
+                final String current_name=pli.getParentDirectory()+"/"+pli.getFileName();
+//				NotifyEvent
+//				Log.v("","new name="+new_name+", current name="+current_name);
+                NotifyEvent ntfy=new NotifyEvent(mContext);
+                ntfy.setListener(new NotifyEventListener(){
+                    @Override
+                    public void positiveResponse(Context c, Object[] o) {
+                        boolean rc_create=false;
+                        if (current_name.startsWith(mGp.safMgr.getExternalSdcardPath())) {
+                            SafFile sf=mGp.safMgr.getSafFileBySdcardPath(mGp.safMgr.getSdcardSafFile(), current_name, false);
+                            sf.renameTo(new_file_name);
+                            rc_create=sf.exists();
+                        } else {
+                            File n_file=new File(new_name);
+                            File c_file=new File(current_name);
+                            rc_create=c_file.renameTo(n_file);
+                        }
+                        mGp.adapterThumbnailView.setAllItemsSelected(false);
+                        mGp.adapterThumbnailView.setSelectMode(false);
+                        setThumbnailViewContextButtonVisibility();
+                        PictureUtil.removeBitmapCacheFile(mGp, current_name);
+                        if (!rc_create) {
+                            dlg_msg.setText(String.format(
+                                    mContext.getString(R.string.msgs_main_file_rename_failed),
+                                    etDir.getText()));
+                            return;
+                        } else {
+                            scanMediaFile(new_name);
+                            scanMediaFile(current_name);
+                        }
+//						buildFolderList();
+                        mGp.currentPictureList.remove(pli);
+                        pli.setFileName(new_file_name);
+                        mGp.currentPictureList.add(pli);
+
+                        AdapterThumbnailList.sort(mGp.currentPictureList,
+                                mGp.adapterThumbnailView.getSortKey(), mGp.adapterThumbnailView.getSortOrder());
+
+                        putPictureList(mGp.currentPictureList, mGp.currentFolderListItem);
+
+                        String fp=mGp.currentPictureList.get(0).getParentDirectory()+"/"+mGp.currentPictureList.get(0).getFileName();
+                        if (!mGp.currentFolderListItem.getThumbnailFilePath().equals(fp)) {
+                            mGp.currentFolderListItem.setThumbnailArray(mGp.currentPictureList.get(0).getThumbnailImageByte());
+                            mGp.currentFolderListItem.setThumbnailFilePath(fp);
+                            saveFolderList(mGp.masterFolderList);
+                            mGp.adapterFolderView.notifyDataSetChanged();
+                        }
+
+                        String sel_month=(String)mGp.spinnerPictureSelector.getSelectedItem();
+                        createPictureShowedList(sel_month);
+
+                        setThumbnailViewContextButtonVisibility();
+
+                        mCommonDlg.showCommonDialog(false, "I",
+                                String.format(mContext.getString(R.string.msgs_main_file_rename_completed), new_name), "", null);
+                    }
+                    @Override
+                    public void negativeResponse(Context c, Object[] o) {
+                    }
+                });
+                mCommonDlg.showCommonDialog(true, "W", mContext.getString(R.string.msgs_main_file_rename_confirm_title),
+                        current_name, ntfy);
+                dialog.dismiss();
+            }
+        });
+        // CANCEL�{�^���̎w��
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+
+    }
 
     private void confirmThumbnailViewDelete() {
     	NotifyEvent ntfy=new NotifyEvent(mContext);
@@ -3110,7 +3241,9 @@ public class ActivityMain extends AppCompatActivity {
 			public void onClick(View v) {
 				if (isUiEnabled()) {
 					setContextButtonEnabled((ImageButton)v, false);
-					confirmThumbnailViewRename();
+
+					if (mGp.adapterThumbnailView.getSelectedItemCount()==1) confirmSingleThumbnailViewRename();
+//					else confirmMultiThumbnailViewRename();
 					setContextButtonEnabled((ImageButton)v, true);
 				}
 			}
@@ -4306,11 +4439,11 @@ public class ActivityMain extends AppCompatActivity {
 					"", ntfy);
 		}
 	};
-	
+
 }
 
 class SavedViewContents {
-	public int folder_view_pos_x=0; 
+	public int folder_view_pos_x=0;
 //	public String folder_selection_filter="";
 //	public int folder_selection_visibility=0;
 //	public int folder_selection_msg_visibility=0;
@@ -4320,28 +4453,28 @@ class SavedViewContents {
 	public ArrayList<FolderListItem> folder_list=null;
 	public String picture_view_file_name="", picture_view_info="", picture_view_zoom="";
 	public int picture_view_show_info=0;
-	
+
 //	public String activity_title="";
-	
+
 	public boolean picture_view_reset_enabled=false;
-	
+
 	public boolean folder_view_adapter_select_mode=false;
 	public boolean thumbnail_view_adapter_select_mode=false;
-	
+
 	public int thumbnail_grid_view_visible_status=0, thumbnail_empty_view_visible_status=0;
 	public int clip_borad_btn_visiblity=0;
 	public String clip_board_btn_text="";
-	
+
 //	public float picture_view_scale=0f;
 //	public Matrix picture_view_matrix=null;
-	
+
 	public int picture_map_button_visibility=0;
 	public int main_progress=-1;
-	
+
 	public boolean folder_adapter_enabled=true, thumbnail_adapter_enabled=true;
-	
+
 	public int folder_sort_key=0, folder_sort_order=0;
 	public int thumbnail_sort_key=0, thumbnail_sort_order=0;
-	
+
 	public int action_bar_display_option=0;
 };
