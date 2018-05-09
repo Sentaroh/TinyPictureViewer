@@ -151,7 +151,7 @@ public class ActivityMain extends AppCompatActivity {
 	   requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
        mFragmentManager=getSupportFragmentManager();
        mRestartStatus=0;
-       mGp=(GlobalParameters)getApplication();
+       mGp=GlobalWorkArea.getGlobalParameters(mContext);
        mGp.refreshMediaDir(mContext);
 //       setTheme(mGp.applicationTheme);
        mGp.themeColorList=ThemeUtil.getThemeColorList(mActivity);
