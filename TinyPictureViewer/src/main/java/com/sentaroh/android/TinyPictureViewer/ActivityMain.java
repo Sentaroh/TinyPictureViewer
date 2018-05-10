@@ -570,12 +570,8 @@ public class ActivityMain extends AppCompatActivity {
 
 		if (mGp.settingScanHiddenFile) menu.findItem(R.id.menu_top_show_hide_hidden).setTitle(mContext.getString(R.string.msgs_menu_show_hidden_file_to_hide));
 		else menu.findItem(R.id.menu_top_show_hide_hidden).setTitle(mContext.getString(R.string.msgs_menu_show_hidden_file_to_show));
-		
-		if (mGp.settingDebugLevel>0 && mGp.settingLogOption) {
-			menu.findItem(R.id.menu_top_log_management).setVisible(true);
-		} else {
-			menu.findItem(R.id.menu_top_log_management).setVisible(false);
-		}
+
+        menu.findItem(R.id.menu_top_log_management).setVisible(true);
         if (isUiEnabled()) {
         	menu.findItem(R.id.menu_top_sort_folder).setEnabled(true);
         	menu.findItem(R.id.menu_top_sort_thumbnail).setEnabled(true);
@@ -687,7 +683,7 @@ public class ActivityMain extends AppCompatActivity {
         			int pic_pos=0;
         			if (fl!=null && fl.length>0) {
         				for(File cf:fl) {
-        					if (PictureUtil.isPictureFile(mGp, cf.getName())) {
+        					if (PictureUtil.isPictureFile(mGp, cf.getPath())) {
         						PictureListItem pli=new PictureListItem();
         						pli.setFileName(cf.getName());
         						pli.setParentDirectory(PictureListItem.createParentDirectory(cf));
@@ -1016,7 +1012,8 @@ public class ActivityMain extends AppCompatActivity {
 			@Override
 			public void positiveResponse(Context c, Object[] o) {
 				mGp.saveSettingOptionLogEnabled(mContext, (Boolean)o[0]);
-//				loadSettingParms();
+//				mGp.loadSettingsParms(mContext);
+                if (!(Boolean)o[0]) mUtil.rotateLogFile();
 			}
 			@Override
 			public void negativeResponse(Context c, Object[] o) {
@@ -1938,7 +1935,7 @@ public class ActivityMain extends AppCompatActivity {
 				Thread th=new Thread() {
 					@Override
 					public void run() {
-						boolean rc_delete=false;
+                        boolean rc_delete=false;
 						for(int i=0;i<mGp.adapterFolderView.getCount();i++) {
 							if (!tc.isEnabled()) break;
 							if (mGp.adapterFolderView.getItem(i).isSelected()) {
@@ -3427,7 +3424,7 @@ public class ActivityMain extends AppCompatActivity {
 		if (fl!=null && fl.length>0) {
 			ArrayList<File>file_list=new ArrayList<File>();
 			for(File item:fl) {
-				if (!item.isDirectory() && PictureUtil.isPictureFile(mGp, item.getName())) file_list.add(item);
+				if (!item.isDirectory() && PictureUtil.isPictureFile(mGp, item.getPath())) file_list.add(item);
 			}
 			if (file_list.size()>0) {
 				ThreadCtrl tc=new ThreadCtrl();

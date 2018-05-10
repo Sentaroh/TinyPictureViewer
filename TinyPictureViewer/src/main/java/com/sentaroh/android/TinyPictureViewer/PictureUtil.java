@@ -24,7 +24,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Bitmap.CompressFormat;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.content.FileProvider;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
@@ -519,15 +522,25 @@ public class PictureUtil {
 //        return inSampleSize;  
 //    };
 	
-	final static public String getFileExtention(String fp) {
-		int per_pos=fp.lastIndexOf(".");
+	final static public String getFileExtention(String name) {
+		int per_pos=name.lastIndexOf(".");
 		if (per_pos > 0) {
-			return fp.substring(per_pos + 1);//.toLowerCase();
+			return name.substring(per_pos + 1);//.toLowerCase();
 		}
 		return "";
 	};
 
-	static private boolean hasContainedNomediaFile(File lf) {
+    final static public String getFileName(String fp) {
+        String file_name="";
+        if (fp.lastIndexOf("/")>=0) {
+            file_name=fp.substring(fp.lastIndexOf("/")+1);
+        } else {
+            file_name=fp;
+        }
+        return file_name;
+    };
+
+    static private boolean hasContainedNomediaFile(File lf) {
 		boolean result=false;
 		File nomedia=new File(lf.getAbsolutePath()+"/.nomedia");
 		result=nomedia.exists(); 
@@ -564,7 +577,7 @@ public class PictureUtil {
 					}
 				} else {
 //					Log.v("","name2="+lf.getPath()+", hidden="+lf.isHidden());
-					if (isPictureFile(gp, lf.getName())) fl.add(lf);
+					if (isPictureFile(gp, lf.getPath())) fl.add(lf);
 				}
 			}
 		} 
@@ -590,7 +603,7 @@ public class PictureUtil {
 										break;
 									}
 								} else {
-									if (!pic_file_exist && isPictureFile(gp, cf.getName()))
+									if (!pic_file_exist && isPictureFile(gp, cf.getPath()))
 										pic_file_exist=true;
 								}
 							}
@@ -605,12 +618,21 @@ public class PictureUtil {
 	};
 
 	public static boolean isPictureFile(GlobalParameters gp, String file_name) {
-		String ft=getFileExtention(file_name);
-		for(String sel_type:gp.settingScanFileType) {
-			if (ft.equalsIgnoreCase(sel_type)) {
-				return true;
-			}
-		}
+		String ft=getFileExtention(getFileName(file_name));
+		if (!ft.equals("")) {
+            for(String sel_type:gp.settingScanFileType) {
+                if (ft.equalsIgnoreCase(sel_type)) {
+                    return true;
+                }
+            }
+        } else {
+            try {
+                ExifInterface ei=new ExifInterface(file_name);
+                if (ei!=null) return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 		return false;
 	};
 
@@ -876,7 +898,13 @@ public class PictureUtil {
 		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
 	    intent.setType("image/*");
 //	    intent.putExtra("mimeType", "image/*");
-	    intent.setDataAndType(Uri.fromFile(file), "image/*");
+        if (Build.VERSION.SDK_INT>=26) {
+            Uri uri= FileProvider.getUriForFile(c, BuildConfig.APPLICATION_ID + ".provider", file);
+            intent.setDataAndType(uri, "image/*");
+//                    startActivity(Intent.createChooser(intent, mUtil.getLogFilePath()));
+        } else {
+            intent.setDataAndType(Uri.fromFile(file), "image/*");
+        }
 //	    intent.setData(Uri.fromFile(file));
 	    try {
 		    c.startActivity(intent);

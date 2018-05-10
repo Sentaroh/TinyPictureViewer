@@ -47,8 +47,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -99,29 +101,45 @@ public final class CommonUtilities {
 	    }
 	};
 
-	public static void sharePictures(Context c, String[] send_pic_fp) {
+	public static String sharePictures(Context c, String[] send_pic_fp) {
 		if (send_pic_fp.length>1) {
 			Intent intent = new Intent();
 			intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 			intent.setType("image/*"); /* This example is sharing jpeg images. */
 
 			ArrayList<Uri> files = new ArrayList<Uri>();
 
 			for(String path : send_pic_fp) {
 			    File file = new File(path);
-			    Uri uri = Uri.fromFile(file);
-			    files.add(uri);
+                Uri uri =null;
+                if (Build.VERSION.SDK_INT>=26)  uri= FileProvider.getUriForFile(c, BuildConfig.APPLICATION_ID + ".provider", file);
+                else Uri.fromFile(file);
+                files.add(uri);
 			}
 			intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
-			c.startActivity(intent);
+            try {
+                c.startActivity(intent);
+            } catch(Exception e) {
+                return "startActivity() failed at shareItem() for multiple item. message="+e.getMessage();
+            }
 		} else {
 			Intent intent = new Intent(android.content.Intent.ACTION_SEND);
 			File lf=new File(send_pic_fp[0]);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(lf)); 
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Uri uri=null;
+            if (Build.VERSION.SDK_INT>=26)  uri= FileProvider.getUriForFile(c, BuildConfig.APPLICATION_ID + ".provider", lf);
+            else Uri.fromFile(lf);
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
 			intent.setType("image/*");
-			c.startActivity(intent);
+            try {
+                c.startActivity(intent);
+            } catch(Exception e) {
+                return "startActivity() failed at shareItem() for multiple item. message="+e.getMessage();
+            }
 		}
+		return null;
 	};
 
 	public static void setSpinnerBackground(Context c, Spinner spinner, boolean theme_is_light) {

@@ -63,20 +63,16 @@
             >
         </activity>
 
-        <receiver 
-    	    android:name=".Log.LogReceiver"
-    	    android:exported="true">
-            <intent-filter>
-			    <action android:name="android.intent.action.ACTION_SHUTDOWN" />
-				<action android:name="com.sentaroh.android.TinyPictureViewer.ACTION_LOG_SEND" />
-				<action android:name="com.sentaroh.android.TinyPictureViewer.ACTION_LOG_RESET" />
-				<action android:name="com.sentaroh.android.TinyPictureViewer.ACTION_LOG_DELETE" />
-				<action android:name="com.sentaroh.android.TinyPictureViewer.ACTION_LOG_ROTATE" />
-				<action android:name="com.sentaroh.android.TinyPictureViewer.ACTION_LOG_FLUSH" />
-				<action android:name="com.sentaroh.android.TinyPictureViewer.ACTION_LOG_CLOSE" />
-			</intent-filter>
-		</receiver>
-        
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths"/>
+        </provider>
+
     </application>
 
 </manifest>

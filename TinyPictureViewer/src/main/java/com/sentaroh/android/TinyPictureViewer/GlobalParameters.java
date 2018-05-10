@@ -407,7 +407,9 @@ public class GlobalParameters extends CommonGlobalParms {
 
 	public void saveSettingOptionLogEnabled(Context c, boolean enabled) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
-		prefs.edit().putBoolean(c.getString(R.string.settings_log_option), enabled).commit(); 
+		prefs.edit().putBoolean(c.getString(R.string.settings_log_option), enabled).commit();
+		this.settingLogOption=enabled;
+        setLogParms(this);
 	};
 
 	public void saveSettingOptionHiddenFile(Context c, boolean enable_hidden_file) {
