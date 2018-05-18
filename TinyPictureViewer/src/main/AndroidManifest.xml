@@ -20,7 +20,8 @@
         android:icon="@drawable/ic_128_tiny_picture_viewer"
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.NoActionBar" 
-        android:name="GlobalParameters" android:largeHeap="true" android:hardwareAccelerated="true">
+        android:largeHeap="true"
+        android:hardwareAccelerated="true">
         <activity
             android:name=".ActivityMain"
             android:label="@string/app_name"
