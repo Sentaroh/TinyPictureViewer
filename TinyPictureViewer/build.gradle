@@ -6,8 +6,8 @@ android {
     defaultConfig {
         applicationId "com.sentaroh.android.TinyPictureViewer"
         minSdkVersion 21
-        targetSdkVersion 23
-//        targetSdkVersion 26
+//        targetSdkVersion 23
+        targetSdkVersion 26
 
         versionCode 55
         versionName "1.43"
