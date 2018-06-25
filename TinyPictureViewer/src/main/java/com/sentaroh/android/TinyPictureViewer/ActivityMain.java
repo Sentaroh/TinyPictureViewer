@@ -22,6 +22,7 @@ import com.sentaroh.android.TinyPictureViewer.Log.LogFileListDialogFragment;
 import com.sentaroh.android.Utilities.ContentProviderUtil;
 import com.sentaroh.android.Utilities.NotifyEvent;
 import com.sentaroh.android.Utilities.SafFile;
+import com.sentaroh.android.Utilities.SafManager;
 import com.sentaroh.android.Utilities.StringUtil;
 import com.sentaroh.android.Utilities.ThemeUtil;
 import com.sentaroh.android.Utilities.ThreadCtrl;
@@ -30,8 +31,6 @@ import com.sentaroh.android.Utilities.Dialog.CommonDialog;
 import com.sentaroh.android.Utilities.Dialog.FileSelectDialogFragment;
 import com.sentaroh.android.Utilities.Dialog.ProgressSpinDialogFragment;
 import com.sentaroh.android.Utilities.NotifyEvent.NotifyEventListener;
-import com.sentaroh.android.Utilities.Widget.CustomPopupMenu;
-import com.sentaroh.android.Utilities.Widget.CustomPopupMenu.OnMenuItemClickListener;
 import com.sentaroh.android.Utilities.Widget.CustomTabContentView;
 import com.sentaroh.android.Utilities.Widget.CustomViewPagerAdapter;
 
@@ -153,6 +152,7 @@ public class ActivityMain extends AppCompatActivity {
        mRestartStatus=0;
        mGp=GlobalWorkArea.getGlobalParameters(mContext);
        mGp.refreshMediaDir(mContext);
+
 //       setTheme(mGp.applicationTheme);
        mGp.themeColorList=ThemeUtil.getThemeColorList(mActivity);
        super.onCreate(savedInstanceState);
@@ -191,8 +191,6 @@ public class ActivityMain extends AppCompatActivity {
 
        setUiActionBar();
        checkRequiredPermissions();
-       checkSdcardAccess();
-       resetDeviceOrientation();
 
        mContentObserver=new ContentObserver(new Handler()) {
     	   @Override
@@ -211,30 +209,28 @@ public class ActivityMain extends AppCompatActivity {
 	   	   };
        };
        getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, mContentObserver);
-	};
+	}
 	
 	private void checkSdcardAccess() {
        for(ScanFolderItem scan_dir:mGp.settingScanDirectoryList) {
     	   if (scan_dir.folder_path.startsWith(mGp.externalRootDirectory)) {
-    	       if (mGp.safMgr.getSdcardSafFile()==null) {
-    	    	   NotifyEvent ntfy=new NotifyEvent(mContext);
-    	    	   ntfy.setListener(new NotifyEventListener(){
-					@Override
-					public void positiveResponse(Context c, Object[] o) {
-						startSdcardPicker();
-					}
-					@Override
-					public void negativeResponse(Context c, Object[] o) {
-						mCommonDlg.showCommonDialog(false, "W", 
-							mContext.getString(R.string.msgs_main_external_sdcard_select_required_cancel_msg), "", null);
-					}
-    	    	   });
-    	    	   showSelectSdcardMsg(ntfy);
-    	       }
+               NotifyEvent ntfy=new NotifyEvent(mContext);
+               ntfy.setListener(new NotifyEventListener(){
+                   @Override
+                   public void positiveResponse(Context c, Object[] o) {
+                       startSdcardPicker();
+                   }
+                   @Override
+                   public void negativeResponse(Context c, Object[] o) {
+                       mCommonDlg.showCommonDialog(false, "W",
+                               mContext.getString(R.string.msgs_main_external_sdcard_select_required_cancel_msg), "", null);
+                   }
+               });
+               showSelectSdcardMsg(ntfy);
     	       break;
     	   }
        }
-	};
+	}
 
 	private void checkMapApplicationAvailability() {
        Uri gmmIntentUri=Uri.parse("geo:0,0?q=loc:0,0");
@@ -659,8 +655,11 @@ public class ActivityMain extends AppCompatActivity {
 				return true;			
 			case R.id.menu_top_switch_test_mode:
 				mGp.pictureShowTestMode=!mGp.pictureShowTestMode;
-				return true;			
-		}
+				return true;
+            case R.id.menu_top_show_sdcard_selector:
+                checkSdcardAccess();
+                return true;
+        }
 		return false;
 	};
 	
@@ -873,7 +872,7 @@ public class ActivityMain extends AppCompatActivity {
 			}
 		}
 
-	    popup.setOnMenuItemClickListener(new OnMenuItemClickListener(){
+	    popup.setOnMenuItemClickListener(new CustomPopupMenu.OnMenuItemClickListener(){
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				switch (item.getItemId()) {
@@ -918,7 +917,7 @@ public class ActivityMain extends AppCompatActivity {
 			}
 		}
 		
-	    popup.setOnMenuItemClickListener(new OnMenuItemClickListener(){
+	    popup.setOnMenuItemClickListener(new CustomPopupMenu.OnMenuItemClickListener(){
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				switch (item.getItemId()) {
@@ -1059,48 +1058,53 @@ public class ActivityMain extends AppCompatActivity {
 		});
 		mCommonDlg.showCommonDialog(true, "W",
 				mContext.getString(R.string.msgs_main_kill_confirm_msg), "", ntfy);
-	};
+	}
 
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (REQUEST_PERMISSIONS_WRITE_EXTERNAL_STORAGE == requestCode) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mGp.createCacheDiretory();
+                refreshFileList();
+            } else {
+                NotifyEvent ntfy_term = new NotifyEvent(mContext);
+                ntfy_term.setListener(new NotifyEvent.NotifyEventListener() {
+                    @Override
+                    public void positiveResponse(Context c, Object[] o) {
+//                        isTaskTermination = true;
+                        finish();
+                    }
+
+                    @Override
+                    public void negativeResponse(Context c, Object[] o) {
+                    }
+                });
+                mCommonDlg.showCommonDialog(false, "W",
+                        mContext.getString(R.string.msgs_main_permission_external_storage_title),
+                        mContext.getString(R.string.msgs_main_permission_external_storage_denied_msg), ntfy_term);
+            }
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		mUtil.addDebugMsg(1, "I", "Return from settings, rc="+requestCode);
 		if (requestCode==0) applySettingParms();
 		else if (requestCode == ACTIVITY_REQUEST_CODE_SDCARD_STORAGE_ACCESS) {
 			mUtil.addDebugMsg(1,"I","Return from Storage Picker. id="+requestCode);
 	        if (resultCode == Activity.RESULT_OK) {
 	        	mUtil.addDebugMsg(1,"I","Intent="+data.getData().toString());
-       		if (mGp.safMgr.isRootTreeUri(data.getData())) {
-	        		mGp.safMgr.addSafFileFromUri(data.getData());
+                if (mGp.safMgr.isUsbUuid(SafManager.getUuidFromUri(data.getData().toString()))) {
+                    reSelectSdcard(mContext.getString(R.string.msgs_main_external_sdcard_usb_retry_select_msg));
+                } else {
+                    if (mGp.safMgr.isRootTreeUri(data.getData())) {
+                        mGp.safMgr.addSdcardUuid(data.getData());
 //	        		if (mSafSelectActivityNotify!=null) mSafSelectActivityNotify.notifyToListener(true, null);
-	        	} else {
-	        		NotifyEvent ntfy_retry=new NotifyEvent(mContext);
-	        		ntfy_retry.setListener(new NotifyEventListener(){
-						@Override
-						public void positiveResponse(Context c, Object[] o) {
-			        		NotifyEvent ntfy=new NotifyEvent(mContext);
-			        		ntfy.setListener(new NotifyEventListener(){
-								@Override
-								public void positiveResponse(Context c, Object[] o) {
-									startSdcardPicker();
-								}
-								@Override
-								public void negativeResponse(Context c, Object[] o) {
-									mCommonDlg.showCommonDialog(false, "W", 
-											mContext.getString(R.string.msgs_main_external_sdcard_select_required_title),
-											mContext.getString(R.string.msgs_main_external_sdcard_select_required_cancel_msg),
-											null);
-								}
-			        		});
-			        		showSelectSdcardMsg(ntfy);
-						}
-						@Override
-						public void negativeResponse(Context c, Object[] o) {
-						}
-	        		});
-	        		mCommonDlg.showCommonDialog(true, "W", 
-	        				mContext.getString(R.string.msgs_main_external_sdcard_select_retry_select_msg), "", ntfy_retry);
-	        	}
+                    } else {
+                        reSelectSdcard(mContext.getString(R.string.msgs_main_external_sdcard_select_retry_select_msg));
+                    }
+                }
 	        } else {
-	        	if (mGp.safMgr.getSdcardSafFile()==null) {
+	        	if (mGp.safMgr.getSdcardRootSafFile()==null) {
 					mCommonDlg.showCommonDialog(false, "W", 
 							mContext.getString(R.string.msgs_main_external_sdcard_select_required_title),
 							mContext.getString(R.string.msgs_main_external_sdcard_select_required_cancel_msg),
@@ -1109,7 +1113,35 @@ public class ActivityMain extends AppCompatActivity {
 	        }
 		}
 	};
-	
+
+	private void reSelectSdcard(String msg) {
+        NotifyEvent ntfy_retry=new NotifyEvent(mContext);
+        ntfy_retry.setListener(new NotifyEventListener(){
+            @Override
+            public void positiveResponse(Context c, Object[] o) {
+                NotifyEvent ntfy=new NotifyEvent(mContext);
+                ntfy.setListener(new NotifyEventListener(){
+                    @Override
+                    public void positiveResponse(Context c, Object[] o) {
+                        startSdcardPicker();
+                    }
+                    @Override
+                    public void negativeResponse(Context c, Object[] o) {
+                        mCommonDlg.showCommonDialog(false, "W",
+                                mContext.getString(R.string.msgs_main_external_sdcard_select_required_title),
+                                mContext.getString(R.string.msgs_main_external_sdcard_select_required_cancel_msg),
+                                null);
+                    }
+                });
+                showSelectSdcardMsg(ntfy);
+            }
+            @Override
+            public void negativeResponse(Context c, Object[] o) {
+            }
+        });
+        mCommonDlg.showCommonDialog(true, "W",msg, "", ntfy_retry);
+    }
+
 	private void applySettingParms() {
 		boolean prev_hidden_file=mGp.settingScanHiddenFile;
 		boolean prev_always_top=mGp.settingCameraFolderAlwayTop;
@@ -1353,8 +1385,11 @@ public class ActivityMain extends AppCompatActivity {
 		mGp.contextButtonThumbnailDeleteView=(LinearLayout)context_thumbnai.findViewById(R.id.context_button_delete_view);
 		mGp.contextButtonThumbnailSelectAllView=(LinearLayout)context_thumbnai.findViewById(R.id.context_button_select_all_view);
 		mGp.contextButtonThumbnailUnselectAllView=(LinearLayout)context_thumbnai.findViewById(R.id.context_button_unselect_all_view);
-		
-		mGp.contextClipBoardBtn=(Button)ll_thumbnail.findViewById(R.id.context_view_clipboard_btn);
+
+        mGp.contextClipBoardView=(LinearLayout)ll_thumbnail.findViewById(R.id.context_view_clipboard_view);
+        mGp.contextClipBoardIcon=(ImageView)ll_thumbnail.findViewById(R.id.context_view_clipboard_icon);
+        mGp.contextClipBoardText=(TextView)ll_thumbnail.findViewById(R.id.context_view_clipboard_text);
+        mGp.contextClipBoardClear=(Button)ll_thumbnail.findViewById(R.id.context_view_clipboard_clear);
 		
 		mPictureView.createView();
 
@@ -1401,8 +1436,7 @@ public class ActivityMain extends AppCompatActivity {
 	    sv.thumbnail_grid_view_visible_status=mGp.thumbnailGridView.getVisibility();
 	    sv.thumbnail_empty_view_visible_status=mGp.thumbnailEmptyView.getVisibility();
 	    
-	    sv.clip_borad_btn_visiblity=mGp.contextClipBoardBtn.getVisibility();
-	    sv.clip_board_btn_text=mGp.contextClipBoardBtn.getText().toString();
+	    sv.clip_borad_view_visiblity =mGp.contextClipBoardView.getVisibility();
 
 		return sv;
 	};
@@ -1459,8 +1493,7 @@ public class ActivityMain extends AppCompatActivity {
 	    mGp.adapterFolderView.setAdapterEnabled(sv.folder_adapter_enabled);
 	    mGp.adapterThumbnailView.setAdapterEnabled(sv.thumbnail_adapter_enabled);
 
-	    mGp.contextClipBoardBtn.setVisibility(sv.clip_borad_btn_visiblity);
-	    mGp.contextClipBoardBtn.setText(sv.clip_board_btn_text);
+	    mGp.contextClipBoardView.setVisibility(sv.clip_borad_view_visiblity);
 
 		setFolderViewListener();
 		setThumbnailViewListener();
@@ -1598,7 +1631,7 @@ public class ActivityMain extends AppCompatActivity {
     
     private void setFolderViewContextButtonVisibility() {
     	boolean sdcard_usable=true;
-		if (mGp.safMgr.getSdcardSafFile()==null) sdcard_usable=false;
+		if (mGp.safMgr.getSdcardRootSafFile()==null) sdcard_usable=false;
     	
     	if (mGp.adapterFolderView.getCount()>0) {
         	if (mGp.adapterFolderView.getSelectedItemCount()>0) {
@@ -1738,8 +1771,8 @@ public class ActivityMain extends AppCompatActivity {
 								boolean rc_rename=false;
 								final ArrayList<File>fl=new ArrayList<File>();
 								PictureUtil.getAllPictureFileInDirectory(mGp, fl, new File(current_name), true); 
-								if (current_name.startsWith(mGp.safMgr.getExternalSdcardPath())) {
-									SafFile sf=mGp.safMgr.getSafFileBySdcardPath(mGp.safMgr.getSdcardSafFile(), current_name, false);
+								if (current_name.startsWith(mGp.safMgr.getSdcardRootPath())) {
+									SafFile sf=mGp.safMgr.createSdcardItem(current_name, false);
 									sf.renameTo(etDir.getText().toString());
 									rc_rename=sf.exists();
 								} else {
@@ -1840,9 +1873,8 @@ public class ActivityMain extends AppCompatActivity {
 								for(PictureListItem pli:pic_list) {
 									if (!tc.isEnabled()) break;
 									psd.updateMsgText(pli.getParentDirectory()+"/"+pli.getFileName());
-									if (pli.getParentDirectory().startsWith(mGp.safMgr.getExternalSdcardPath())) {
-										SafFile sf=mGp.safMgr.getSafFileBySdcardPath(mGp.safMgr.getSdcardSafFile(), 
-												pli.getParentDirectory()+"/"+pli.getFileName(), false);
+									if (pli.getParentDirectory().startsWith(mGp.safMgr.getSdcardRootPath())) {
+										SafFile sf=mGp.safMgr.createSdcardItem(pli.getParentDirectory()+"/"+pli.getFileName(), false);
 										rc_delete=sf.delete();
 									} else {
 										File lf=new File(pli.getParentDirectory()+"/"+pli.getFileName());
@@ -2678,10 +2710,14 @@ public class ActivityMain extends AppCompatActivity {
 				break;
 			}
 		}
-		if (item_list.length()==0) mGp.contextClipBoardBtn.setText("");
+		if (item_list.length()==0) mGp.contextClipBoardText.setText("");
 		else {
-			if (mGp.isCutMode) mGp.contextClipBoardBtn.setText(mContext.getString(R.string.msgs_main_cont_label_cut)+" "+folder_name+":"+item_list);
-			else mGp.contextClipBoardBtn.setText(mContext.getString(R.string.msgs_main_cont_label_copy)+" "+folder_name+":"+item_list);
+            mGp.contextClipBoardText.setText(folder_name+":"+item_list);
+			if (mGp.isCutMode) {
+                mGp.contextClipBoardIcon.setImageDrawable(mContext.getDrawable(R.drawable.context_button_cut));
+            } else {
+                mGp.contextClipBoardIcon.setImageDrawable(mContext.getDrawable(R.drawable.context_button_copy));
+            }
 		}
 	};
 	
@@ -2717,18 +2753,27 @@ public class ActivityMain extends AppCompatActivity {
 	
     private void setThumbnailViewContextButtonVisibility() {
     	if (isPasteEnabled()) {
-    		if (!mGp.adapterThumbnailView.isSelectMode()) mGp.contextButtonThumbnailPasteView.setVisibility(LinearLayout.VISIBLE);
-    		else mGp.contextButtonThumbnailPasteView.setVisibility(LinearLayout.INVISIBLE);
+    	    if (mGp.currentFolderListItem.getParentDirectory().startsWith(mGp.internalRootDirectory)) {
+                if (!mGp.adapterThumbnailView.isSelectMode()) mGp.contextButtonThumbnailPasteView.setVisibility(LinearLayout.VISIBLE);
+                else mGp.contextButtonThumbnailPasteView.setVisibility(LinearLayout.INVISIBLE);
+            } else {
+    	        if (mGp.safMgr.isSdcardMounted()) {
+                    if (!mGp.adapterThumbnailView.isSelectMode()) mGp.contextButtonThumbnailPasteView.setVisibility(LinearLayout.VISIBLE);
+                    else mGp.contextButtonThumbnailPasteView.setVisibility(LinearLayout.INVISIBLE);
+                } else {
+                    mGp.contextButtonThumbnailPasteView.setVisibility(LinearLayout.INVISIBLE);
+                }
+            }
     	} else {
     		mGp.contextButtonThumbnailPasteView.setVisibility(LinearLayout.INVISIBLE);
     	}
-    	if (mGp.copyCutList.size()==0) mGp.contextClipBoardBtn.setVisibility(Button.GONE);
-    	else mGp.contextClipBoardBtn.setVisibility(Button.VISIBLE);
+    	if (mGp.copyCutList.size()==0) mGp.contextClipBoardView.setVisibility(LinearLayout.GONE);
+    	else mGp.contextClipBoardView.setVisibility(LinearLayout.VISIBLE);
     	
     	boolean enable_file_mod=true;
     	if (mGp.currentFolderListItem!=null && 
     			!mGp.currentFolderListItem.getParentDirectory().startsWith(mGp.internalRootDirectory)) {
-    		if (mGp.safMgr.getSdcardSafFile()==null) enable_file_mod=false;
+    		if (mGp.safMgr.getSdcardRootSafFile()==null) enable_file_mod=false;
     	}
     	
     	if (mGp.adapterThumbnailView.getCount()>0) {
@@ -2854,8 +2899,8 @@ public class ActivityMain extends AppCompatActivity {
 					@Override
 					public void positiveResponse(Context c, Object[] o) {
 						boolean rc_create=false;
-						if (current_name.startsWith(mGp.safMgr.getExternalSdcardPath())) {
-							SafFile sf=mGp.safMgr.getSafFileBySdcardPath(mGp.safMgr.getSdcardSafFile(), current_name, false);
+						if (current_name.startsWith(mGp.safMgr.getSdcardRootPath())) {
+							SafFile sf=mGp.safMgr.createSdcardItem(current_name, false);
 							sf.renameTo(new_file_name);
 							rc_create=sf.exists();
 						} else {
@@ -2987,8 +3032,8 @@ public class ActivityMain extends AppCompatActivity {
                     @Override
                     public void positiveResponse(Context c, Object[] o) {
                         boolean rc_create=false;
-                        if (current_name.startsWith(mGp.safMgr.getExternalSdcardPath())) {
-                            SafFile sf=mGp.safMgr.getSafFileBySdcardPath(mGp.safMgr.getSdcardSafFile(), current_name, false);
+                        if (current_name.startsWith(mGp.safMgr.getSdcardRootPath())) {
+                            SafFile sf=mGp.safMgr.createSdcardItem(current_name, false);
                             sf.renameTo(new_file_name);
                             rc_create=sf.exists();
                         } else {
@@ -3090,10 +3135,9 @@ public class ActivityMain extends AppCompatActivity {
 							if (pli.isSelected()) {
 								if (i==0) thumbnail_update_required=true;
 								psd.updateMsgText(pli.getParentDirectory()+"/"+pli.getFileName());								
-								if (pli.getParentDirectory().startsWith(mGp.safMgr.getExternalSdcardPath())) {
+								if (pli.getParentDirectory().startsWith(mGp.safMgr.getSdcardRootPath())) {
 									String to_fn=pli.getParentDirectory()+"/"+pli.getFileName();
-									SafFile sf=mGp.safMgr.getSafFileBySdcardPath(mGp.safMgr.getSdcardSafFile(), 
-											to_fn, false);
+									SafFile sf=mGp.safMgr.createSdcardItem(to_fn, false);
 									rc_delete=sf.delete();
 									FileIo.deleteMediaStoreItem(mContext, to_fn);
 								} else {
@@ -3347,7 +3391,7 @@ public class ActivityMain extends AppCompatActivity {
 			}
 		});
 		
-        mGp.contextClipBoardBtn.setOnClickListener(new OnClickListener(){
+        mGp.contextClipBoardClear.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
 				String item_list="", sep="";
@@ -3841,7 +3885,7 @@ public class ActivityMain extends AppCompatActivity {
 		} catch (StreamCorruptedException e) {
 //			e.printStackTrace();
 		} catch (IOException e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 		}
 		mUtil.addDebugMsg(2, "I", "Picture list saved"+
 				", Picture count="+pic_list.size()+", Elapsed time="+(System.currentTimeMillis()-b_time)+

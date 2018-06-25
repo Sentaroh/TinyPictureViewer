@@ -60,7 +60,11 @@
     <item android:id="@+id/menu_top_uninstall"
           android:title="@string/msgs_menu_uninstall"
           />
-    
+
+    <item android:id="@+id/menu_top_show_sdcard_selector"
+        android:title="@string/msgs_menu_show_sdcard_selector"
+        />
+
     <item android:id="@+id/menu_top_switch_test_mode"
           android:title="Switch test mode"
           />

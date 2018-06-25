@@ -217,10 +217,12 @@ public class PictureView {
 		
 		mGp.mainProgressBar.setVisibility(ProgressBar.GONE);
 		
-    	if (!mGp.currentFolderListItem.getParentDirectory().startsWith(mGp.internalRootDirectory)) {
-    		if (mGp.safMgr.getSdcardSafFile()==null) mGp.pictureDeleteBtn.setVisibility(ImageButton.GONE);
-    		else mGp.pictureDeleteBtn.setVisibility(ImageButton.VISIBLE);
-    	}
+    	if (mGp.currentFolderListItem.getParentDirectory().startsWith(mGp.internalRootDirectory)) {
+    		mGp.pictureDeleteBtn.setVisibility(ImageButton.VISIBLE);
+    	} else {
+            if (mGp.safMgr.getSdcardRootSafFile()==null) mGp.pictureDeleteBtn.setVisibility(ImageButton.GONE);
+            else mGp.pictureDeleteBtn.setVisibility(ImageButton.VISIBLE);
+        }
 
 		setPictureViewInformation(image_position);
 		setPictureViewPrevNextButtonEnabled(mGp.customViewPager);
@@ -600,10 +602,9 @@ public class PictureView {
 								final int c_num=mGp.adapterPictureView.getPictureWorkList().size();
 								final PictureListItem del_pic_item=mGp.adapterPictureView.getPictureWorkList().get(pos).pictureItem;
 								boolean rc_delete=false;
-								if (del_pic_item.getParentDirectory().startsWith(mGp.safMgr.getExternalSdcardPath())) {
+								if (del_pic_item.getParentDirectory().startsWith(mGp.safMgr.getSdcardRootPath())) {
 									String to_fn=del_pic_item.getParentDirectory()+"/"+del_pic_item.getFileName();
-									SafFile sf=mGp.safMgr.getSafFileBySdcardPath(mGp.safMgr.getSdcardSafFile(), 
-											to_fn, false);
+									SafFile sf=mGp.safMgr.createSdcardItem(to_fn, false);
 									rc_delete=sf.delete();
 									FileIo.deleteMediaStoreItem(mContext, to_fn);
 								} else {

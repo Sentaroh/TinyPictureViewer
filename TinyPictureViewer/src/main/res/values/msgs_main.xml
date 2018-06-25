@@ -18,13 +18,14 @@
 (Please tap the &#8220;Select&#8221; when the screen of &#8220;SDCARD&#8221; in step2 is displayed directly in the upper left corner. If the upper left is other than &#8220;SDCARD&#8221; are displayed, tap the upper left corner of the menu, from step 1 please try again.)</string>
 	
 	<string name="msgs_main_external_sdcard_select_retry_select_msg">The root directory of the external SDCARD was not selected. Do you wants to re select?</string>
+    <string name="msgs_main_external_sdcard_usb_retry_select_msg">USB storage is selected but USB storage can not be used. Do you want to select it again?</string>
 	<string name="msgs_main_external_sdcard_select_required_select_msg_file_api21">SMBSync_SD_CARD_5.0_EN.png</string>
 	<string name="msgs_main_external_sdcard_select_required_select_msg_file_api23">SMBSync_SD_CARD_6.0_EN.png</string>
 	<string name="msgs_main_external_sdcard_select_required_cancel_msg">You can not perform edit until external SD card is selected.</string>
 	
-	<string name="msgs_main_permission_external_storage_title">許可</string>
-	<string name="msgs_main_permission_external_storage_request_msg">内部ストレージに同期するデータや管理用データの読み書きを行うために、内部ストレージにアクセスする許可を与えてください。</string>
-	<string name="msgs_main_permission_external_storage_denied_msg">内部ストレージにアクセスする許可が与えられていないため編集ができません。アプリケーションを終了します。</string>
+	<string name="msgs_main_permission_external_storage_title">Internal storage permission</string>
+	<string name="msgs_main_permission_external_storage_request_msg">Please give permission to access internal storage in order to read and write photos of internal storage and management data.</string>
+	<string name="msgs_main_permission_external_storage_denied_msg">Since permission to access internal storage is not given, it is impossible to read and write photos and management data, quit the application.</string>
 		
 	<string name="msgs_main_exif_image_info_size" formatted="false">%sx%s</string>
 	<string name="msgs_main_exif_image_info_aperture">F=%s</string>

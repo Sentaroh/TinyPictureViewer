@@ -166,7 +166,7 @@ public class FileIo {
 			if (!tc.isEnabled()) break;
 			try {
 				in_file=new File(f_path);
-				tsf=gp.safMgr.getSafFileBySdcardPath(gp.safMgr.getSdcardSafFile(), to_dir+"/"+in_file.getName()+".tmp", false);
+				tsf=gp.safMgr.createSdcardItem(to_dir+"/"+in_file.getName()+".tmp", false);
 				FileInputStream fis=new FileInputStream(in_file);
 				OutputStream fos=gp.appContext.getContentResolver().openOutputStream(tsf.getUri());
 				byte[] buff=new byte[BUFFER_SIZE];
@@ -186,7 +186,7 @@ public class FileIo {
 					break;
 				} else {
 					String to_fn=to_dir+"/"+in_file.getName();
-					SafFile dsf=gp.safMgr.getSafFileBySdcardPath(gp.safMgr.getSdcardSafFile(), to_fn, false);
+					SafFile dsf=gp.safMgr.createSdcardItem(to_fn, false);
 					dsf.delete();
 					tsf.renameTo(in_file.getName());
 					result=true;
@@ -213,7 +213,7 @@ public class FileIo {
 		if (copyInternalToExternal(gp, util, psdf, tc, ccl, to_dir)) {
 			for(String item:ccl) {
 				if (!tc.isEnabled()) break;
-				SafFile sf=gp.safMgr.getSafFileBySdcardPath(gp.safMgr.getSdcardSafFile(), item, false);
+				SafFile sf=gp.safMgr.createSdcardItem(item, false);
 				if (sf!=null) {
 					result=sf.delete();
 					if (!result) {
@@ -251,7 +251,7 @@ public class FileIo {
 		if (copyInternalToInternal(gp, util, psdf, tc, ccl, to_dir)) {
 			for(String item:ccl) {
 				if (!tc.isEnabled()) break;
-				SafFile sf=gp.safMgr.getSafFileBySdcardPath(gp.safMgr.getSdcardSafFile(), item, false);
+				SafFile sf=gp.safMgr.createSdcardItem(item, false);
 				if (sf!=null) {
 					result=sf.delete();
 					if (!result) {

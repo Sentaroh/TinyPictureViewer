@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 import com.sentaroh.android.TinyPictureViewer.PictureUtil.PictureFileCacheItem;
 import com.sentaroh.android.Utilities.CommonGlobalParms;
-import com.sentaroh.android.Utilities.SafFileManager;
+import com.sentaroh.android.Utilities.SafManager;
 import com.sentaroh.android.Utilities.ThemeColorList;
 
 import android.Manifest;
@@ -50,6 +50,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -83,7 +84,7 @@ public class GlobalParameters extends CommonGlobalParms {
 	
 	public String folderListFilePath="", pictureFileCacheDirectory="", pictureBitmapCacheDirectory="";
 
-	public SafFileManager safMgr=null;
+	public SafManager safMgr=null;
 
 	public ArrayList<FolderListItem> showedFolderList=new ArrayList<FolderListItem>();
 	public ArrayList<FolderListItem> masterFolderList=null;
@@ -168,7 +169,10 @@ public class GlobalParameters extends CommonGlobalParms {
 			contextButtonThumbnailDeleteView=null, contextButtonThumbnailSelectAllView=null, 
 			contextButtonThumbnailUnselectAllView=null;
 
-	public Button contextClipBoardBtn=null;
+    public LinearLayout contextClipBoardView=null;
+	public ImageView contextClipBoardIcon=null;
+    public TextView contextClipBoardText=null;
+    public Button contextClipBoardClear=null;
 	
 	public Spinner spinnerPictureSelector=null;
 	public CustomActionBarSpinnerAdapter adapterPictureSelectorSpinner=null;
@@ -270,10 +274,7 @@ public class GlobalParameters extends CommonGlobalParms {
         folderListFilePath=internalRootDirectory+appSpecificDirectory+"/folder_list_cache";
         pictureFileCacheDirectory=internalRootDirectory+appSpecificDirectory+"/pic_cache/";
         pictureBitmapCacheDirectory=internalRootDirectory+appSpecificDirectory+"/bitmap_cache/";
-        File lf=new File(pictureFileCacheDirectory);
-        if (!lf.exists()) lf.mkdirs();
-        lf=new File(pictureBitmapCacheDirectory);
-        if (!lf.exists()) lf.mkdirs();
+        createCacheDiretory();
 
         initStorageStatus(c);
 
@@ -282,6 +283,13 @@ public class GlobalParameters extends CommonGlobalParms {
         setLogParms(this);
         loadFolderSortParm(c);
     };
+
+    public void createCacheDiretory()  {
+        File lf=new File(pictureFileCacheDirectory);
+        if (!lf.exists()) lf.mkdirs();
+        lf=new File(pictureBitmapCacheDirectory);
+        if (!lf.exists()) lf.mkdirs();
+    }
 
     public void clearParms() {
 		showedFolderList=new ArrayList<FolderListItem>();
@@ -330,9 +338,9 @@ public class GlobalParameters extends CommonGlobalParms {
 			}
 		}
 		if (safMgr==null) {
-			safMgr=new SafFileManager(c, settingDebugLevel>0);
+			safMgr=new SafManager(c, settingDebugLevel>0);
 		} else {
-			safMgr.loadSafFileList();
+			safMgr.loadSafFile();
 		}
 	};
 	
@@ -345,13 +353,6 @@ public class GlobalParameters extends CommonGlobalParms {
 		setLogDirName(gp.settingLogMsgDir);
 		setLogFileName(gp.settingLogMsgFilename);
 		setApplicationTag(APPLICATION_TAG);
-		setLogIntent(BROADCAST_LOG_RESET,
-				BROADCAST_LOG_DELETE,
-				BROADCAST_LOG_FLUSH,
-				BROADCAST_LOG_ROTATE,
-				BROADCAST_LOG_SEND,
-				BROADCAST_LOG_CLOSE);
-
 	}
 	
 //	private int mTextColorForeground=0;

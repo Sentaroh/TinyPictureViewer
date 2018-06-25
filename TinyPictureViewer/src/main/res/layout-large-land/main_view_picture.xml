@@ -25,29 +25,30 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="40dp"
         android:orientation="vertical" >
-        
+        <!--android:layout_marginRight="20dp"-->
+
 	    <LinearLayout
 	        android:id="@+id/main_view_picture_image_bottom_control"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal" >
-	
+
 	        <LinearLayout
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:layout_gravity="bottom"
 	            android:gravity="bottom"
 	            android:orientation="vertical" >
-	
+
 	            <ImageButton
 	                android:id="@+id/main_view_picture_image_show_map"
 	                android:layout_width="60dp"
 	                android:layout_height="60dp"
 	                android:scaleType="centerCrop"
 	                android:src="@drawable/ic_64_map" />
-	
+
 	            <ImageButton
 	                android:id="@+id/main_view_picture_rotate_picture_left"
 	                android:layout_width="60dp"
@@ -55,7 +56,7 @@
 	                android:layout_marginTop="10dp"
 	                android:scaleType="centerCrop"
 	                android:src="@drawable/ic_128_rotate_picture_left" />
-	
+
 	            <ImageButton
 	                android:id="@+id/main_view_picture_image_prev"
 	                android:layout_width="60dp"
@@ -63,7 +64,7 @@
 	                android:layout_marginTop="10dp"
 	                android:scaleType="centerCrop"
 	                android:src="@drawable/prev_file_enabled" />
-	
+
 	            <ImageButton
 	                android:id="@+id/main_view_picture_image_zoom_out"
 	                android:layout_width="60dp"
@@ -72,20 +73,20 @@
 	                android:scaleType="centerCrop"
 	                android:src="@drawable/ic_128_zoom_out" />
 	        </LinearLayout>
-	
+
 	        <LinearLayout
 	            android:layout_width="0dp"
 	            android:layout_height="wrap_content"
 	            android:layout_gravity="bottom|center_vertical"
 	            android:layout_weight="1"
 	            android:orientation="vertical" >
-	
-	            
+
+
 		        <LinearLayout
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
 		            android:orientation="horizontal" >
-	            
+
 		            <ImageButton
 		                android:id="@+id/main_view_picture_image_wallpaper"
 		                android:layout_width="60dp"
@@ -94,7 +95,7 @@
 		                android:layout_gravity="bottom"
 		                android:scaleType="centerCrop"
 		                android:src="@drawable/ic_128_wall_paper" />
-	
+
 		            <ImageButton
 		                android:id="@+id/main_view_picture_image_lock_zoom"
 		                android:layout_width="60dp"
@@ -103,7 +104,7 @@
 						android:layout_marginLeft="10dp"
 		                android:scaleType="centerCrop"
 		                android:src="@drawable/ic_128_zoom_lock" />
-	
+
 		            <TextView
 		                android:id="@+id/main_view_picture_image_info"
 		                android:layout_width="0dp"
@@ -116,7 +117,7 @@
 		                android:layout_gravity="center"
 		                android:text="Information"
 		                android:textAppearance="?android:attr/textAppearanceMedium" />
-	
+
 		            <ImageButton
 		                android:id="@+id/main_view_picture_lock_screen_rotation"
 		                android:layout_width="60dp"
@@ -125,7 +126,7 @@
 		                android:layout_gravity="bottom"
 		                android:scaleType="centerCrop"
 		                android:src="@drawable/ic_128_screen_rotation_locked" />
-		            
+
 		            <ImageButton
 		                android:id="@+id/main_view_picture_share"
 		                android:layout_width="60dp"
@@ -134,10 +135,10 @@
 		                android:layout_gravity="bottom"
 		                android:scaleType="centerCrop"
 		                android:src="@drawable/context_button_share" />
-	
+
 	            </LinearLayout>
 	        </LinearLayout>
-	
+
 	        <LinearLayout
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
@@ -150,7 +151,7 @@
 	                android:layout_height="60dp"
 	                android:scaleType="centerCrop"
 	                android:src="@drawable/ic_128_undo" />
-	
+
 	            <ImageButton
 	                android:id="@+id/main_view_picture_rotate_picture_right"
 	                android:layout_width="60dp"
@@ -158,7 +159,7 @@
 	                android:layout_marginTop="10dp"
 	                android:scaleType="centerCrop"
 	                android:src="@drawable/ic_128_rotate_picture_right" />
-	
+
 	            <ImageButton
 	                android:id="@+id/main_view_picture_image_next"
 	                android:layout_width="60dp"
@@ -166,7 +167,7 @@
 	                android:layout_marginTop="10dp"
 	                android:scaleType="centerCrop"
 	                android:src="@drawable/next_file_enabled" />
-	
+
 	            <ImageButton
 	                android:id="@+id/main_view_picture_image_zoom_in"
 	                android:layout_width="60dp"
@@ -175,13 +176,15 @@
 	                android:scaleType="centerCrop"
 	                android:src="@drawable/ic_128_zoom_in" />
 	        </LinearLayout>
-	        
+
 	    </LinearLayout>
-	    <LinearLayout
-	        android:id="@+id/main_view_spacer_view_picture_top"
-	        android:layout_width="match_parent"
-	        android:layout_height="40dp"
-	        android:orientation="vertical" />
+
+        <LinearLayout
+            android:id="@+id/main_view_spacer_view_picture_top"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical" />
+        <!--android:layout_height="40dp"-->
 	    
     </LinearLayout>
 
@@ -197,53 +200,60 @@
 	    <LinearLayout
 	        android:id="@+id/main_view_spacer_view_picture_bottom"
 	        android:layout_width="match_parent"
-	        android:layout_height="30dp" 
+	        android:layout_height="20dp"
 	        android:orientation="vertical"/>
-        
+        <!--android:layout_height="30dp"-->
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
-		    <LinearLayout
-		        android:layout_width="0dp"
-		        android:layout_height="wrap_content"
-		        android:layout_gravity="center_vertical"
-		        android:layout_marginLeft="10dp"
-		        android:layout_weight="1"
-		        android:orientation="vertical" >
-	
-		        <TextView
-		            android:id="@+id/main_view_picture_image_file_name"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_marginLeft="5dp"
-		            android:ellipsize="marquee"
-			        android:focusable="true"
-			        android:focusableInTouchMode="true"
-			        android:singleLine="true"
-		            android:text="File name"
-		            android:textAppearance="?android:attr/textAppearanceMedium" />
-	
-	
-		        <TextView
-		            android:id="@+id/main_view_picture_image_zoom_ratio"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_marginLeft="5dp"
-		            android:layout_marginRight="10dp"
-		            android:text="9999%"
-		            android:textAppearance="?android:attr/textAppearanceMedium" />
-		        	        
-			</LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-		    <ImageButton
-		        android:id="@+id/main_view_picture_delete"
-		        android:layout_width="60dp"
-		        android:layout_height="60dp"
-		        android:scaleType="centerCrop"
-		        android:src="@drawable/context_button_trash" />
-            
+                <TextView
+                    android:id="@+id/main_view_picture_image_file_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:singleLine="true"
+                    android:text="File name"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+                <TextView
+                    android:id="@+id/main_view_picture_image_zoom_ratio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="10dp"
+                    android:text="9999%"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/main_view_picture_delete"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/context_button_trash" />
+
+            <!--Add for delete button spacer(from right edge)-->
+            <LinearLayout
+                android:id="@+id/main_view_spacer_view_picture_middle"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+
         </LinearLayout>
 
     </LinearLayout>

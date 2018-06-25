@@ -618,6 +618,7 @@ public class PictureUtil {
 	};
 
 	public static boolean isPictureFile(GlobalParameters gp, String file_name) {
+	    if (file_name.endsWith("/.nomedia")) return false;
 		String ft=getFileExtention(getFileName(file_name));
 		if (!ft.equals("")) {
             for(String sel_type:gp.settingScanFileType) {

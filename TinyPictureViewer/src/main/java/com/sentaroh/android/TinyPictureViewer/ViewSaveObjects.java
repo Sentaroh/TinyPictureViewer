@@ -22,8 +22,7 @@ class ViewSaveObjects {
 	public boolean thumbnail_view_adapter_select_mode=false;
 
 	public int thumbnail_grid_view_visible_status=0, thumbnail_empty_view_visible_status=0;
-	public int clip_borad_btn_visiblity=0;
-	public String clip_board_btn_text="";
+	public int clip_borad_view_visiblity =0;
 
 //	public float picture_view_scale=0f;
 //	public Matrix picture_view_matrix=null;
