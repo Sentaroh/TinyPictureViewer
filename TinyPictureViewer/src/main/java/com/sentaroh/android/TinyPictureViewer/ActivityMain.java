@@ -2719,6 +2719,7 @@ public class ActivityMain extends AppCompatActivity {
                 mGp.contextClipBoardIcon.setImageDrawable(mContext.getDrawable(R.drawable.context_button_copy));
             }
 		}
+        setThumbnailViewContextButtonVisibility();
 	};
 	
 	private void copyItem() {
