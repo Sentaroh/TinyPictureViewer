@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.text.ParseException;
@@ -303,48 +304,93 @@ public class PictureListItem implements Externalizable, Comparable<PictureListIt
 //				", folder name="+getFolderName()+", parentDirectory="+getParentDirectory());
 	};
 
-	private void setSpecificExifData(File pic_file) {
-		try {
-			FileInputStream fis=new FileInputStream(pic_file);
-			int buf_sz=1024*4;
-			byte[] buff=new byte[buf_sz];
-			fis.read(buff);
-			fis.close();
-//			Log.v("",StringUtil.getDumpFormatHexString(buff, 0, 512));
-			if (buff[0]==(byte)0xff && buff[1]==(byte)0xd8) {//if jpeg header
-//				Log.v("","foud jpeg header");
-				int i=2;
-				while(i<buf_sz-3) {// find dde1 jpeg segemnt
-//					Log.v("",StringUtil.getDumpFormatHexString(buff, i, 2));
-					if (buff[i]==(byte)0xff && buff[i+1]==(byte)0xe1) {
-						//found jpeg segment
-//						Log.v("","foud jpeg segement");
-						
-						int seg_size=getIntFrom2Byte(false, buff[i+2], buff[i+3]);
-//						String exif_id=new String(buff,i+4,6);
-						boolean little_endian=false;
-//						Log.v("",StringUtil.getDumpFormatHexString(buff, i+10, 2));
-						if (buff[i+10]==(byte)0x49 && buff[i+11]==(byte)0x49) little_endian=true;
-//						int tiff_ver=getIntFrom2Byte(false, buff[i+12], buff[i+13]);
-						int ifd_offset=getIntFrom4Byte(little_endian, buff[i+14], buff[i+15], buff[i+16], buff[i+17]);
-						
-//						Log.v("","seg="+seg_size+", id="+exif_id+",　little="+little_endian+", tiff="+tiff_ver+", ifd offset="+ifd_offset); 
-//						Log.v("",StringUtil.getDumpFormatHexString(buff, i+10+ifd_offset, 256));
-						
-						byte[] ifd_buff=Arrays.copyOfRange(buff, i+10, seg_size+ifd_offset);
-						process0thIfdTag(little_endian, ifd_buff, ifd_offset);
-						break;
-					} else {
-						int offset=((int)buff[i+2]&0xff)*256+((int)buff[i+3]&0xff);
-						i=offset+i+2;
-					}
-				}
-				
-			}
-		} catch (IOException e) {
-//			e.printStackTrace();
-		}
-	};
+    private byte[] readExifData(BufferedInputStream bis, int read_size) throws IOException {
+        byte[] buff=new byte[read_size];
+        int rc=bis.read(buff,0,read_size);
+        if (rc>0) return buff;
+        else return null;
+    }
+
+    private void setSpecificExifData(File pic_file) {
+        String[] result=null;
+        try {
+            FileInputStream fis=new FileInputStream(pic_file);
+            BufferedInputStream bis=new BufferedInputStream(fis, 1024*32);
+            byte[] buff=readExifData(bis, 2);
+            if (buff!=null && buff[0]==(byte)0xff && buff[1]==(byte)0xd8) {//if jpeg header
+                while(buff!=null) {// find dde1 jpeg segemnt
+                    buff=readExifData(bis, 4);
+                    if (buff!=null) {
+                        if (buff[0]==(byte)0xff && buff[1]==(byte)0xe1) {
+                            int seg_size=getIntFrom2Byte(false, buff[2], buff[3]);
+                            buff=readExifData(bis, 14);
+                            boolean little_endian=false;
+                            if (buff[6]==(byte)0x49 && buff[7]==(byte)0x49) little_endian=true;
+                            int ifd_offset=getIntFrom4Byte(little_endian, buff[10], buff[11], buff[12], buff[13]);
+
+                            byte[] ifd_buff=new byte[seg_size+ifd_offset];
+                            System.arraycopy(buff,6,ifd_buff,0,8);
+                            buff=readExifData(bis, seg_size);
+                            System.arraycopy(buff,0,ifd_buff,8,seg_size);
+                            process0thIfdTag(little_endian, ifd_buff, ifd_offset);
+                            break;
+                        } else {
+                            int offset=((int)buff[2]&0xff)*256+((int)buff[3]&0xff)-2;
+                            buff=readExifData(bis, offset);
+                        }
+                    } else {
+                        return ;
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+//            e.printStackTrace();
+        }
+    }
+
+//    private void setSpecificExifData(File pic_file) {
+//		try {
+//			FileInputStream fis=new FileInputStream(pic_file);
+//			int buf_sz=1024*4;
+//			byte[] buff=new byte[buf_sz];
+//			fis.read(buff);
+//			fis.close();
+////			Log.v("",StringUtil.getDumpFormatHexString(buff, 0, 512));
+//			if (buff[0]==(byte)0xff && buff[1]==(byte)0xd8) {//if jpeg header
+////				Log.v("","foud jpeg header");
+//				int i=2;
+//				while(i<buf_sz-3) {// find dde1 jpeg segemnt
+////					Log.v("",StringUtil.getDumpFormatHexString(buff, i, 2));
+//					if (buff[i]==(byte)0xff && buff[i+1]==(byte)0xe1) {
+//						//found jpeg segment
+////						Log.v("","foud jpeg segement");
+//
+//						int seg_size=getIntFrom2Byte(false, buff[i+2], buff[i+3]);
+////						String exif_id=new String(buff,i+4,6);
+//						boolean little_endian=false;
+////						Log.v("",StringUtil.getDumpFormatHexString(buff, i+10, 2));
+//						if (buff[i+10]==(byte)0x49 && buff[i+11]==(byte)0x49) little_endian=true;
+////						int tiff_ver=getIntFrom2Byte(false, buff[i+12], buff[i+13]);
+//						int ifd_offset=getIntFrom4Byte(little_endian, buff[i+14], buff[i+15], buff[i+16], buff[i+17]);
+//
+////						Log.v("","seg="+seg_size+", id="+exif_id+",　little="+little_endian+", tiff="+tiff_ver+", ifd offset="+ifd_offset);
+////						Log.v("",StringUtil.getDumpFormatHexString(buff, i+10+ifd_offset, 256));
+//
+//						byte[] ifd_buff=Arrays.copyOfRange(buff, i+10, seg_size+ifd_offset);
+//						process0thIfdTag(little_endian, ifd_buff, ifd_offset);
+//						break;
+//					} else {
+//						int offset=((int)buff[i+2]&0xff)*256+((int)buff[i+3]&0xff);
+//						i=offset+i+2;
+//					}
+//				}
+//
+//			}
+//		} catch (IOException e) {
+////			e.printStackTrace();
+//		}
+//	};
 	
 	static private int getIntFrom2Byte(boolean little_endian, byte b1, byte b2) {
 		int result=0;
