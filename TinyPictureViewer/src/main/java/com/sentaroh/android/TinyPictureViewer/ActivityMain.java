@@ -1550,7 +1550,7 @@ public class ActivityMain extends AppCompatActivity {
 	public void setUiFullScreen() {
 		mGp.uiMode=UI_MODE_FULL_SCREEN;
 		mGp.mainToolBar.setVisibility(android.widget.Toolbar.GONE);
-		setUiHideSystemView();
+//		setUiHideSystemView();
 		mGp.pictureViewBottomControl.setVisibility(LinearLayout.INVISIBLE);//GONE);
 		mGp.pictureViewTopControl.setVisibility(TextView.INVISIBLE);//GONE);
 		if (!mGp.showSinglePicture) mGp.saveSettingPictureDisplayUiMode(mContext);
