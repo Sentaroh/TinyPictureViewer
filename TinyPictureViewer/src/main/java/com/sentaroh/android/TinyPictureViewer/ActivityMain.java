@@ -4095,7 +4095,7 @@ public class ActivityMain extends AppCompatActivity {
 				sortScanFolderList();
 				mGp.saveScanFolderList(mContext);
 				dialog.dismiss();
-				checkSdcardAccess();
+				if (!mGp.safMgr.isSdcardMounted()) checkSdcardAccess();
 //				mShowProgressBar=true;
 				buildFolderList();
 			}
