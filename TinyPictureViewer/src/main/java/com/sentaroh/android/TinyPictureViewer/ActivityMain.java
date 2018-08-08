@@ -2885,12 +2885,12 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
 		});
-		etDir.setText(pli.getFileName().substring(0,pli.getFileName().lastIndexOf("."))); 
+		etDir.setText(pli.getFileName());
 		
 		//OK button
 		btnOk.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				final String new_file_name=etDir.getText().toString()+pli.getFileName().substring(pli.getFileName().lastIndexOf("."));
+				final String new_file_name=etDir.getText().toString();//+pli.getFileName().substring(pli.getFileName().lastIndexOf("."));
 				final String new_name=pli.getParentDirectory()+"/"+new_file_name;
 				final String current_name=pli.getParentDirectory()+"/"+pli.getFileName();
 //				NotifyEvent 
@@ -2902,8 +2902,8 @@ public class ActivityMain extends AppCompatActivity {
 						boolean rc_create=false;
 						if (current_name.startsWith(mGp.safMgr.getSdcardRootPath())) {
 							SafFile sf=mGp.safMgr.createSdcardItem(current_name, false);
-							sf.renameTo(new_file_name);
-							rc_create=sf.exists();
+							rc_create=sf.renameTo(new_file_name);
+//							rc_create=sf.exists();
 						} else {
 							File n_file=new File(new_name);
 							File c_file=new File(current_name);
