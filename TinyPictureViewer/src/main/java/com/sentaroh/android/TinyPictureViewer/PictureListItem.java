@@ -488,7 +488,7 @@ public class PictureListItem implements Externalizable, Comparable<PictureListIt
 				org_bitmap.recycle();
 			}
 		} else {
-			result=PictureUtil.createImageByteArrayWithResize(debug_enabled, 512, 20, fp, orientation); 
+			result=PictureUtil.createImageByteArrayWithResize(debug_enabled, 512, 20, fp, orientation);
 		}
 		setThumbnailVerified(true);
 		return result;

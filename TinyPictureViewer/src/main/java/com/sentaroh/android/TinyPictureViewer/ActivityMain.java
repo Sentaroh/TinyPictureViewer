@@ -24,6 +24,7 @@ import com.sentaroh.android.Utilities.NotifyEvent;
 import com.sentaroh.android.Utilities.SafFile;
 import com.sentaroh.android.Utilities.SafManager;
 import com.sentaroh.android.Utilities.StringUtil;
+import com.sentaroh.android.Utilities.SystemInfo;
 import com.sentaroh.android.Utilities.ThemeUtil;
 import com.sentaroh.android.Utilities.ThreadCtrl;
 import com.sentaroh.android.Utilities.ContextButton.ContextButtonUtil;
@@ -161,6 +162,8 @@ public class ActivityMain extends AppCompatActivity {
        
        mUtil.addDebugMsg(1, "I", "onCreate entered, bd="+savedInstanceState);
 
+       putSystemInfo();
+
        mTcCreatePictureCacheFile.setDisabled();
        
        resetDeviceOrientation();
@@ -210,7 +213,12 @@ public class ActivityMain extends AppCompatActivity {
        };
        getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, mContentObserver);
 	}
-	
+
+    private void putSystemInfo() {
+        ArrayList<String> sil= SystemInfo.listSystemInfo(mContext, mGp.safMgr);
+        for(String item:sil) mUtil.addDebugMsg(1,"I",item);
+    }
+
 	private void checkSdcardAccess() {
        for(ScanFolderItem scan_dir:mGp.settingScanDirectoryList) {
     	   if (scan_dir.folder_path.startsWith(mGp.externalRootDirectory)) {

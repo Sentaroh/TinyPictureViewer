@@ -619,6 +619,7 @@ public class PictureUtil {
 
 	public static boolean isPictureFile(GlobalParameters gp, String file_name) {
 	    if (file_name.endsWith("/.nomedia")) return false;
+        if (file_name.endsWith("/.android_secure")) return false;
 		String ft=getFileExtention(getFileName(file_name));
 		if (!ft.equals("")) {
             for(String sel_type:gp.settingScanFileType) {
@@ -627,12 +628,12 @@ public class PictureUtil {
                 }
             }
         } else {
-            try {
-                ExifInterface ei=new ExifInterface(file_name);
-                if (ei!=null) return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                ExifInterface ei=new ExifInterface(file_name);
+//                if (ei!=null) return true;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
 		return false;
 	};
