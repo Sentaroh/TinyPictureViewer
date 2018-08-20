@@ -9,7 +9,7 @@ android {
 //        targetSdkVersion 23
         targetSdkVersion 26
 
-        versionCode 50
+        versionCode 60
         versionName "1.48"
 
     }

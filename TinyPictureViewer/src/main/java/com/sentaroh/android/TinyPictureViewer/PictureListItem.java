@@ -611,7 +611,7 @@ public class PictureListItem implements Externalizable, Comparable<PictureListIt
             String[]latitude_m=latitude_part[1].split("/");
             String[]latitude_s=latitude_part[2].split("/");
             if (longitude_d!=null && longitude_m!=null && longitude_s!=null &&
-                    latitude_d!=null && latitude_m!=null && latitude_s!=null) {
+                    latitude_d!=null && latitude_m!=null && latitude_s!=null && longitude_ref!=null && latitude_ref!=null) {
                 Double longitude=Double.parseDouble(longitude_d[0])/Double.parseDouble(longitude_d[1])+
                         Double.parseDouble(longitude_m[0])/Double.parseDouble(longitude_m[1])/60d+
                         Double.parseDouble(longitude_s[0])/Double.parseDouble(longitude_s[1])/3600d;
