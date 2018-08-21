@@ -154,10 +154,21 @@ public class AdapterPictureList extends PagerAdapter {
 		} else {
 			PictureFileCacheItem pfbmci=getBitmapCache(pa.image_file_path, pa.image_orientation);
 //					PictureUtil.loadPictureFileCacheFile(mGp, pa.image_file_path);
-			Bitmap bm_in=BitmapFactory.decodeByteArray(pfbmci.bitmap_byte_array,0,pfbmci.bitmap_byte_array.length);
-			setBitmapWithRestoreRotation(pa, bm_in);
-	    	File img=new File(pa.image_file_path);
-    		if (img.lastModified()!=pfbmci.file_last_modified || img.length()!=pfbmci.file_length) load_required=true;
+            if (pfbmci!=null) {
+                Bitmap bm_in=BitmapFactory.decodeByteArray(pfbmci.bitmap_byte_array,0,pfbmci.bitmap_byte_array.length);
+                setBitmapWithRestoreRotation(pa, bm_in);
+                File img=new File(pa.image_file_path);
+                if (img.lastModified()!=pfbmci.file_last_modified || img.length()!=pfbmci.file_length) load_required=true;
+            } else {
+                if (pa.image_thumbnail!=null) {
+                    Bitmap bm_in=BitmapFactory.decodeByteArray(pa.image_thumbnail,0,pa.image_thumbnail.length);
+                    setBitmapWithRestoreRotation(pa, bm_in);
+                } else {
+                    pa.image_view.setImageBitmap(mDummyThumbnail,
+                            pa.image_view.getDisplayMatrix(), PICTURE_VIEW_MIN_SCALE, PICTURE_VIEW_MAX_SCALE);
+                }
+                load_required=true;
+            }
 		}
 
 		if (mGp.settingDebugLevel>1) 
