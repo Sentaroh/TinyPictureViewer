@@ -898,16 +898,13 @@ public class PictureUtil {
 		String result="";
 		Intent intent = new Intent(Intent.ACTION_ATTACH_DATA);
 		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
-	    intent.setType("image/*");
-//	    intent.putExtra("mimeType", "image/*");
-        if (Build.VERSION.SDK_INT>=26) {
-            Uri uri= FileProvider.getUriForFile(c, BuildConfig.APPLICATION_ID + ".provider", file);
-            intent.setDataAndType(uri, "image/*");
-//                    startActivity(Intent.createChooser(intent, mUtil.getLogFilePath()));
-        } else {
-            intent.setDataAndType(Uri.fromFile(file), "image/*");
-        }
-//	    intent.setData(Uri.fromFile(file));
+//        if (Build.VERSION.SDK_INT>=26) {
+//            Uri uri= FileProvider.getUriForFile(c, BuildConfig.APPLICATION_ID + ".provider", file);
+//            intent.setDataAndType(uri, "image/*");
+//        } else {
+//            intent.setDataAndType(Uri.fromFile(file), "image/*");
+//        }
+        intent.setDataAndType(Uri.fromFile(file), "image/*");
 	    try {
 		    c.startActivity(intent);
 	    } catch(Exception e) {

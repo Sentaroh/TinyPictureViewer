@@ -55,6 +55,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
@@ -146,62 +147,65 @@ public class ActivityMain extends AppCompatActivity {
 	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-	   mContext=getApplicationContext();
-	   mActivity=this;
-	   requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-       mFragmentManager=getSupportFragmentManager();
-       mRestartStatus=0;
-       mGp=GlobalWorkArea.getGlobalParameters(mContext);
-       mGp.refreshMediaDir(mContext);
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
+	    mContext=getApplicationContext();
+	    mActivity=this;
+	    requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+        mFragmentManager=getSupportFragmentManager();
+        mRestartStatus=0;
+        mGp=GlobalWorkArea.getGlobalParameters(mContext);
+        mGp.refreshMediaDir(mContext);
 
 //       setTheme(mGp.applicationTheme);
-       mGp.themeColorList=ThemeUtil.getThemeColorList(mActivity);
-       super.onCreate(savedInstanceState);
+        mGp.themeColorList=ThemeUtil.getThemeColorList(mActivity);
+        super.onCreate(savedInstanceState);
 
-       mUtil=new CommonUtilities(mContext, "Main", mGp);
+        mUtil=new CommonUtilities(mContext, "Main", mGp);
        
-       mUtil.addDebugMsg(1, "I", "onCreate entered, bd="+savedInstanceState);
+        mUtil.addDebugMsg(1, "I", "onCreate entered, bd="+savedInstanceState);
 
-       putSystemInfo();
+        putSystemInfo();
 
-       mTcCreatePictureCacheFile.setDisabled();
+        mTcCreatePictureCacheFile.setDisabled();
        
-       resetDeviceOrientation();
+        resetDeviceOrientation();
        
-       mUiHandler=new Handler();
+        mUiHandler=new Handler();
        
-       mCommonDlg=new CommonDialog(mActivity, mFragmentManager);
+        mCommonDlg=new CommonDialog(mActivity, mFragmentManager);
        
-       mDefaultBackLightLevel=getWindow().getAttributes().screenBrightness;
+        mDefaultBackLightLevel=getWindow().getAttributes().screenBrightness;
        
-       mGp.masterFolderList=loadFolderList();
-       mGp.showedFolderList.clear();
-       mGp.showedFolderList.addAll(mGp.masterFolderList);
-	   if (mGp.masterFolderList.size()==0) {
-			PictureUtil.clearCacheFileDirectory(mGp.pictureFileCacheDirectory);
-			PictureUtil.clearCacheFileDirectory(mGp.pictureBitmapCacheDirectory);
-	   }
+        mGp.masterFolderList=loadFolderList();
+        mGp.showedFolderList.clear();
+        mGp.showedFolderList.addAll(mGp.masterFolderList);
+	    if (mGp.masterFolderList.size()==0) {
+			 PictureUtil.clearCacheFileDirectory(mGp.pictureFileCacheDirectory);
+			 PictureUtil.clearCacheFileDirectory(mGp.pictureBitmapCacheDirectory);
+	    }
 
-       mPictureView=new PictureView(mActivity, mGp, mUtil, mCommonDlg);
+        mPictureView=new PictureView(mActivity, mGp, mUtil, mCommonDlg);
 
-       checkMapApplicationAvailability();
+        checkMapApplicationAvailability();
 
-       initViewWidget();
+        initViewWidget();
        
-       if (Build.VERSION.SDK_INT>=24) {
-    	   resetMultiWindowMode(isInMultiWindowMode());
-       }
+        if (Build.VERSION.SDK_INT>=24) {
+    	    resetMultiWindowMode(isInMultiWindowMode());
+        }
 
-       setUiActionBar();
-       checkRequiredPermissions();
+        setUiActionBar();
+        checkRequiredPermissions();
 
-       mContentObserver=new ContentObserver(new Handler()) {
-    	   @Override
-    	   public void onChange(boolean selfChange) {
-    		   onChange(selfChange, null);
-    	   };
-	   	   @Override
-	   	   public void onChange(boolean selfChange, Uri uri) {
+        mContentObserver=new ContentObserver(new Handler()) {
+    	    @Override
+    	    public void onChange(boolean selfChange) {
+    		    onChange(selfChange, null);
+    	    };
+	   	    @Override
+	   	    public void onChange(boolean selfChange, Uri uri) {
 	   	    	mUtil.addDebugMsg(1,"I","onChange entered "+"selfChange="+selfChange+", Uri="+uri);
 //  	    	if (mTcBuildFolderList==null) {
 //  				if (mGp.settingAutoFileChangeDetection.equals(AUTO_FILE_CHANGE_DETECTION_MEDIA_STORE_CHANGED)) {
@@ -209,9 +213,9 @@ public class ActivityMain extends AppCompatActivity {
 //  				}
 //  	    	}
 	   	    	mRefreshFilelistRequired=true;
-	   	   };
-       };
-       getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, mContentObserver);
+	   	    };
+        };
+        getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, mContentObserver);
 	}
 
     private void putSystemInfo() {
