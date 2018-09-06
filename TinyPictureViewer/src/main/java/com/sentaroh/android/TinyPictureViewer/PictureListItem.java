@@ -25,19 +25,25 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
+import android.util.Log;
+
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
+import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
 import com.drew.metadata.exif.GpsDirectory;
+import com.drew.metadata.exif.makernotes.NikonType1MakernoteDirectory;
 import com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory;
+import com.drew.metadata.xmp.XmpDescriptor;
 import com.drew.metadata.xmp.XmpDirectory;
 import com.sentaroh.android.Utilities.SerializeUtil;
 import com.sentaroh.android.Utilities.StringUtil;
@@ -633,6 +639,7 @@ public class PictureListItem implements Externalizable, Comparable<PictureListIt
 		ArrayList<ExifThumbnailDirectory> exif_thumbnail = (ArrayList<ExifThumbnailDirectory>) metaData.getDirectoriesOfType(ExifThumbnailDirectory.class);
 		ArrayList<GpsDirectory> gps = (ArrayList<GpsDirectory>) metaData.getDirectoriesOfType(GpsDirectory.class);
 		ArrayList<XmpDirectory> xmp = (ArrayList<XmpDirectory>) metaData.getDirectoriesOfType(XmpDirectory.class);
+
 		if (xmp.size()>0) {
 			XMPMeta xmpMeta = xmp.get(0).getXMPMeta();
 			ArrayList<String>subject_list=new ArrayList<String>();
@@ -731,8 +738,44 @@ public class PictureListItem implements Externalizable, Comparable<PictureListIt
 			setExifModel(ifdDirectory.getString(ExifIFD0Directory.TAG_MODEL));
 			setExifImageOrientation(ifdDirectory.getString(ExifIFD0Directory.TAG_ORIENTATION));
 		}
-		
-		try {
+
+//        for (Tag tag : directory.getTags()) {
+//            System.out.format("[%s] %s = %s", tag.getDirectoryName(), tag.getTagName(), tag.getDescription());
+//            System.out.println();
+//            if (tag.getTagName().startsWith("Lens")) {
+//                Log.v("","lens="+tag.getDescription());
+//            }
+//        }
+
+//        for (Directory dir : metaData.getDirectories()) {
+//            for (Tag tag : directory.getTags()) {
+//                System.out.format("[%s] %s = %s",
+//                        tag.getDirectoryName(), tag.getTagName(), tag.getDescription());
+//                System.out.println();
+//            }
+//        }
+
+//		if (xmp.size()>0) {
+//		    for(XmpDirectory item:xmp) {
+//                XmpDescriptor descriptor3 = new XmpDescriptor(item);
+//                XMPMeta xmpMeta = item.getXMPMeta();
+//                XMPIterator itr = null;
+//                try {
+//                    itr = xmpMeta.iterator();
+//                } catch (XMPException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                // Iterate XMP properties
+//                while (itr.hasNext()) {
+//
+//                    XMPPropertyInfo property = (XMPPropertyInfo) itr.next();
+//
+//                    // Print details of the property
+//                    System.out.println(property.getPath() + ": " + property.getValue());
+//                }            }
+//        }
+        try {
 			setExifImageHeight(directory.getInt(ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT));
 			setExifImageWidth(directory.getInt(ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH));
 		} catch (MetadataException e) {
@@ -742,8 +785,22 @@ public class PictureListItem implements Externalizable, Comparable<PictureListIt
 		}
 
 		if (createThumbnail) {
-			byte[] bm_me=(exif_thumbnail.size()>0)?exif_thumbnail.get(0).getThumbnailData():null;
-			setThumbnailImageByte(verifyAndCorrectThumbnail(bm_me,fp, getExifImageOrientation()));
+//            long b_time=System.currentTimeMillis();
+
+            byte[] bm_me=(exif_thumbnail.size()>0)?exif_thumbnail.get(0).getThumbnailData():null;
+            setThumbnailImageByte(verifyAndCorrectThumbnail(bm_me,fp, getExifImageOrientation()));
+
+//            byte[] bm_me=null;
+//            if (exif_thumbnail.size()>0) {
+//                try {
+//                    ExifInterface ei=new ExifInterface(fp);
+//                    setThumbnailImageByte(verifyAndCorrectThumbnail(ei.getThumbnail(),fp, getExifImageOrientation()));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            setThumbnailImageByte(verifyAndCorrectThumbnail(bm_me,fp, getExifImageOrientation()));
+//             Log.v("","elapsed="+(System.currentTimeMillis()-b_time));
 		}
 		
 		if (getExifMaker().toUpperCase().startsWith("NIKON")) {
@@ -753,9 +810,12 @@ public class PictureListItem implements Externalizable, Comparable<PictureListIt
 				for(int i=0;i<nikon_mn_t2.size();i++) {
 					try {
 						int nsr=nikon_mn_t2.get(i).getInt(NikonType2MakernoteDirectory.TAG_EXPOSURE_SEQUENCE_NUMBER);
+//                        String lens=nikon_mn_t2.get(i).getString(NikonType2MakernoteDirectory.TAG_LENS);
+//                        String l_date=nikon_mn_t2.get(i).getString(130);//NikonType2MakernoteDirectory.TAG_LENS_DATA);
+//                        String l_type=nikon_mn_t2.get(i).getString(NikonType2MakernoteDirectory.TAG_LENS_TYPE);
 						if (nsr!=0) setExifExifNumberOfShutterRelased(nsr);
 					} catch (MetadataException e) {
-//						e.printStackTrace();
+						e.printStackTrace();
 					}
 				}
 			}

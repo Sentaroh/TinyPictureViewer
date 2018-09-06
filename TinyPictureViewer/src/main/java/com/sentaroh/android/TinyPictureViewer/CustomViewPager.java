@@ -3,10 +3,14 @@ package com.sentaroh.android.TinyPictureViewer;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.Scroller;
+
+import java.lang.reflect.Field;
 
 class CustomViewPager extends ViewPager {//OverScrollEffectViewPager {
 
@@ -32,6 +36,7 @@ class CustomViewPager extends ViewPager {//OverScrollEffectViewPager {
 	};
 	
 	private void init() {
+        setMyScroller();
 //		setPageTransformer(false, new ViewPager.PageTransformer() {
 //		    @Override
 //		    public void transformPage(View page, float position) {
@@ -46,6 +51,28 @@ class CustomViewPager extends ViewPager {//OverScrollEffectViewPager {
 //		    } 
 //		});
 	};
+
+    private void setMyScroller() {
+        try {
+            Class<?> viewpager = ViewPager.class;
+            Field scroller = viewpager.getDeclaredField("mScroller");
+            scroller.setAccessible(true);
+            scroller.set(this, new MyScroller(getContext()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static class MyScroller extends Scroller {
+        private MyScroller(Context context) {
+            super(context, new FastOutSlowInInterpolator());
+        }
+
+        @Override
+        public void startScroll(int startX, int startY, int dx, int dy, int duration) {
+            super.startScroll(startX, startY, dx, dy, 0);
+        }
+    }
 	
 	public void enableDefaultPageTransformer(boolean enabled) {
 		if (enabled) {
