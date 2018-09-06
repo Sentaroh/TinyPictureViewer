@@ -9,8 +9,8 @@ android {
 //        targetSdkVersion 23
         targetSdkVersion 26
 
-        versionCode 63
-        versionName "1.51"
+        versionCode 64
+        versionName "1.52"
 
     }
 
