@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
@@ -52,10 +53,12 @@ class CustomViewPager extends ViewPager {//OverScrollEffectViewPager {
 //		});
 	};
 
+//	private Object mOriginalScroller=null;
     private void setMyScroller() {
         try {
             Class<?> viewpager = ViewPager.class;
             Field scroller = viewpager.getDeclaredField("mScroller");
+//            if (mOriginalScroller==null) mOriginalScroller=scroller.get(this);
             scroller.setAccessible(true);
             scroller.set(this, new MyScroller(getContext()));
         } catch (Exception e) {
@@ -63,14 +66,28 @@ class CustomViewPager extends ViewPager {//OverScrollEffectViewPager {
         }
     }
 
-    private static class MyScroller extends Scroller {
+    private boolean mUseFastScroll=false;
+    public void setUseFastScroll(boolean use) {
+        mUseFastScroll=use;
+    }
+
+    public boolean isUseFastScroll() {
+        return mUseFastScroll;
+    }
+
+    private class MyScroller extends Scroller {
         private MyScroller(Context context) {
             super(context, new FastOutSlowInInterpolator());
         }
 
         @Override
         public void startScroll(int startX, int startY, int dx, int dy, int duration) {
-            super.startScroll(startX, startY, dx, dy, 0);
+//            Log.v("","duraton="+duration);
+            int new_duration=duration;
+            if (isUseFastScroll()) {
+                new_duration=0;
+            }
+            super.startScroll(startX, startY, dx, dy, new_duration);
         }
     }
 	

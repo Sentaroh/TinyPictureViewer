@@ -368,7 +368,14 @@ public class PictureView {
 				if (mGp.customViewPager.getAdapter()==null) return;
 				if (mGp.customViewPager.getCurrentItem()>0) {
 					mGp.picturePrevBtn.setEnabled(false);
+                    mGp.customViewPager.setUseFastScroll(true);
 					mGp.customViewPager.setCurrentItem(mGp.customViewPager.getCurrentItem()-1, true);
+                    mUiHandler.postDelayed(new Runnable(){
+                        @Override
+                        public void run() {
+                            mGp.customViewPager.setUseFastScroll(false);
+                        }
+                    },100);
 				}
 //				setPrevNextButtonEnabled(mGp.mCustomViewPager);
 			}
@@ -381,7 +388,14 @@ public class PictureView {
 				if (mGp.customViewPager.getAdapter()==null) return;
 				if (mGp.customViewPager.getCurrentItem()<mGp.customViewPager.getAdapter().getCount()) {
 					mGp.pictureNextBtn.setEnabled(false);
+                    mGp.customViewPager.setUseFastScroll(true);
 					mGp.customViewPager.setCurrentItem(mGp.customViewPager.getCurrentItem()+1, true);
+					mUiHandler.postDelayed(new Runnable(){
+                        @Override
+                        public void run() {
+                            mGp.customViewPager.setUseFastScroll(false);
+                        }
+                    },100);
 				}
 //				setPrevNextButtonEnabled(mGp.mCustomViewPager);
 			}
