@@ -35,6 +35,7 @@ import com.sentaroh.android.Utilities.NotifyEvent;
 import com.sentaroh.android.Utilities.SafFile;
 import com.sentaroh.android.Utilities.Dialog.CommonDialog;
 import com.sentaroh.android.Utilities.NotifyEvent.NotifyEventListener;
+import com.sentaroh.android.Utilities.Widget.CustomTextView;
 
 public class PictureView {
 	private GlobalParameters mGp=null;
@@ -88,7 +89,7 @@ public class PictureView {
 		mGp.pictureViewZoomRatio=(TextView)ll_picture.findViewById(R.id.main_view_picture_image_zoom_ratio);
 		mGp.pictureViewFileName.setBackgroundColor(Color.argb(128, 32, 32, 32));
 		mGp.pictureViewZoomRatio.setBackgroundColor(Color.argb(128, 32, 32, 32));
-		mGp.pictureViewFileInfo=(TextView)ll_picture.findViewById(R.id.main_view_picture_image_info);
+		mGp.pictureViewFileInfo=(CustomTextView)ll_picture.findViewById(R.id.main_view_picture_image_info);
 		mGp.pictureViewFileInfo.setBackgroundColor(Color.argb(128, 32, 32, 32));
 		mGp.picturePrevBtn=(ImageButton)ll_picture.findViewById(R.id.main_view_picture_image_prev);
 //		mImagePrev.setBackgroundColor(Color.argb(00, 32, 32, 32));

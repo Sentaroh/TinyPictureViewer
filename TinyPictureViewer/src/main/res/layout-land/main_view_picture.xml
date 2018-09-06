@@ -101,7 +101,7 @@
 		                    android:scaleType="centerCrop"
 		                    android:src="@drawable/ic_128_zoom_lock" />
 		
-		                <TextView
+		                <com.sentaroh.android.Utilities.Widget.CustomTextView
 		                    android:id="@+id/main_view_picture_image_info"
 		                    android:layout_width="0dp"
 		                    android:layout_height="wrap_content"

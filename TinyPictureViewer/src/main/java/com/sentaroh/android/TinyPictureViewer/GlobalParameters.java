@@ -32,6 +32,7 @@ import com.sentaroh.android.TinyPictureViewer.PictureUtil.PictureFileCacheItem;
 import com.sentaroh.android.Utilities.CommonGlobalParms;
 import com.sentaroh.android.Utilities.SafManager;
 import com.sentaroh.android.Utilities.ThemeColorList;
+import com.sentaroh.android.Utilities.Widget.CustomTextView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -130,7 +131,7 @@ public class GlobalParameters extends CommonGlobalParms {
 	public LinearLayout pictureViewBottomControl=null;
 	public LinearLayout customViewPagerView=null;
 	public CustomViewPager customViewPager=null;
-	public TextView pictureViewFileInfo=null;
+	public CustomTextView pictureViewFileInfo=null;
 	public TextView pictureViewFileName=null;
 	public TextView pictureViewZoomRatio=null;
 	public ImageButton picturePrevBtn=null;
