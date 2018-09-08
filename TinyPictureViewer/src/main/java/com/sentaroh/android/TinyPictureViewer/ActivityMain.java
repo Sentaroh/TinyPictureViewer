@@ -39,6 +39,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,6 +50,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -163,6 +166,7 @@ public class ActivityMain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mUtil=new CommonUtilities(mContext, "Main", mGp);
+        mGp.cUtil=mUtil;
        
         mUtil.addDebugMsg(1, "I", "onCreate entered, bd="+savedInstanceState);
 
@@ -674,8 +678,29 @@ public class ActivityMain extends AppCompatActivity {
         }
 		return false;
 	};
-	
-	private boolean showSpecificPicture(Intent intent) {
+
+//    public static String getFilePath(Context c, String cache_dir, Uri content_uri) {
+//        if (content_uri==null) return null;
+//        final String[] column={MediaStore.MediaColumns._ID,  MediaStore.MediaColumns.DATA,
+//                MediaStore.MediaColumns.MIME_TYPE, MediaStore.MediaColumns.DISPLAY_NAME};
+//        if (content_uri.toString().startsWith("content://")) {
+//            Cursor cursor = c.getContentResolver().query(content_uri, column, null, null, null);
+//            if (cursor!=null) {
+//                if (cursor.moveToFirst()) {
+////				long id=cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+////    			Uri image_uri = ContentUris.withAppendedId(content_uri, Long.valueOf(id));
+//                    String t_file_name = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME));
+//                    String t_mime_type = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
+//				String file_path = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+////				Log.v("","data="+file_path);
+//                }
+//                cursor.close();
+//            }
+//        }
+//        return null;
+//    };
+
+    private boolean showSpecificPicture(Intent intent) {
 		mUtil.addDebugMsg(1,"I","showSpecificPicture, "+"Uri="+intent.getData()+", type="+intent.getType());
 		boolean result=true;
 		if (intent.getData()!=null) {

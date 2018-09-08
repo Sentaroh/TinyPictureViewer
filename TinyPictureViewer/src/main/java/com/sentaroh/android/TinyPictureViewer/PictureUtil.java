@@ -223,8 +223,8 @@ public class PictureUtil {
 			ois.close();
 			bis.close();
 			addPictureFileCacheItemToCache(gp, pfbmci) ;
-        	if (gp.settingDebugLevel>1)  
-        		Log.v(APPLICATION_TAG,"Bitmap cache file loaded"+
+        	if (gp.settingDebugLevel>1)
+                gp.cUtil.addDebugMsg(1,"I","Bitmap cache file loaded"+
         			", elapsed time="+(System.currentTimeMillis()-b_time)+", fp="+pic_file_path);
 		} catch (FileNotFoundException e) {
 //			e.printStackTrace();
@@ -248,17 +248,15 @@ public class PictureUtil {
 			oos.flush();
 			oos.close();
 			addPictureFileCacheItemToCache(gp, pfbmci);
-        	if (gp.settingDebugLevel>1)  
-        		Log.v(APPLICATION_TAG,"Bitmap cache file saved"+
+        	if (gp.settingDebugLevel>1)
+                gp.cUtil.addDebugMsg(1,"I","savePictureFileCacheFile cache file saved"+
         			", elapsed time="+(System.currentTimeMillis()-b_time)+", fp="+bmcf.getAbsolutePath());
-		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
 		} catch (IOException e) {
-//			e.printStackTrace();
+            gp.cUtil.addDebugMsg(1,"I","savePictureFileCacheFile cache file save error, error="+e.getMessage()+", fp="+pfbmci.file_path);
 		}
 	};
 
-	final static public PictureFileCacheItem getPictureFileCacheItem(final GlobalParameters gp, 
+	final static public PictureFileCacheItem getPictureFileCacheItem(final GlobalParameters gp,
 			final String fp, DisplayMetrics disp_metrics, String orientation) {
     	long b_time=System.currentTimeMillis();
     	boolean recreate_required=false;
@@ -280,8 +278,8 @@ public class PictureUtil {
     		pfbmci=createPictureCacheFile(gp, fp, disp_metrics, orientation);
     	}
     	if (gp.settingDebugLevel>1)  
-    		Log.v(APPLICATION_TAG,"loadPictureCacheItem ended, Elapsed time="+(System.currentTimeMillis()-b_time)+
-    			", fp="+fp);
+    		gp.cUtil.addDebugMsg(1,"I","getPictureFileCacheItem ended, Elapsed time="+(System.currentTimeMillis()-b_time)+
+    			", result="+pfbmci+", fp="+fp);
 
 		return pfbmci;
     };
@@ -326,66 +324,74 @@ public class PictureUtil {
 	final static private Bitmap createPictureFileBitmap(final GlobalParameters gp,
 			final String fp, DisplayMetrics disp_metrics, String orientation) {
     	long b_time=System.currentTimeMillis();
-    	byte[] image_file_byte_array=PictureUtil.createImageByteArray(fp);
-    	BitmapFactory.Options org_opt = new BitmapFactory.Options();
-    	org_opt.inJustDecodeBounds=true;
-    	BitmapFactory.decodeByteArray(image_file_byte_array, 0, image_file_byte_array.length, org_opt);
-    	
-		BitmapFactory.Options decode_opt = new BitmapFactory.Options();  
-    	if (org_opt.outHeight*org_opt.outHeight>1024*1024*20) {
-    		decode_opt.inSampleSize=2;
-    	}
-		Bitmap input_bitmap=BitmapFactory.decodeByteArray(image_file_byte_array, 0, image_file_byte_array.length, decode_opt);
-		if (input_bitmap!=null) {
-			long decoded_time=System.currentTimeMillis()-b_time;
-			
-			int bm_width=0, bm_height=0;
-			if (orientation.equals(PictureListItem.EXIF_IMAGE_ORIENTATION_CLOCKWISE_270) || 
-					orientation.equals(PictureListItem.EXIF_IMAGE_ORIENTATION_CLOCKWISE_90) ||
-					orientation.equals(PictureListItem.EXIF_IMAGE_ORIENTATION_CLOCKWISE_90_AND_FLIP_HORIZONTAL) ||
-					orientation.equals(PictureListItem.EXIF_IMAGE_ORIENTATION_CLOCKWISE_270_AND_FLIP_HORIZONTAL) ) {
-				bm_width=input_bitmap.getHeight();
-				bm_height=input_bitmap.getWidth();
-			} else {
-				bm_height=input_bitmap.getHeight();
-				bm_width=input_bitmap.getWidth();
-			}
-			bm_height=input_bitmap.getHeight();
-			bm_width=input_bitmap.getWidth();
+    	byte[] image_file_byte_array=PictureUtil.createImageByteArray(gp, fp);
+    	if (image_file_byte_array!=null) {
+            BitmapFactory.Options org_opt = new BitmapFactory.Options();
+            org_opt.inJustDecodeBounds=true;
+            BitmapFactory.decodeByteArray(image_file_byte_array, 0, image_file_byte_array.length, org_opt);
 
-			float scale=getFitImageSize(bm_width, bm_height);
-			
-			int o_h=0, o_w=0;
-			o_w=(int)((float)input_bitmap.getWidth()/scale);
-			o_h=(int)((float)input_bitmap.getHeight()/scale);
-			
+            BitmapFactory.Options decode_opt = new BitmapFactory.Options();
+            if (org_opt.outHeight*org_opt.outHeight>1024*1024*20) {
+                decode_opt.inSampleSize=2;
+            }
+            Bitmap input_bitmap=BitmapFactory.decodeByteArray(image_file_byte_array, 0, image_file_byte_array.length, decode_opt);
+            if (input_bitmap!=null) {
+                long decoded_time=System.currentTimeMillis()-b_time;
+
+                int bm_width=0, bm_height=0;
+                if (orientation.equals(PictureListItem.EXIF_IMAGE_ORIENTATION_CLOCKWISE_270) ||
+                        orientation.equals(PictureListItem.EXIF_IMAGE_ORIENTATION_CLOCKWISE_90) ||
+                        orientation.equals(PictureListItem.EXIF_IMAGE_ORIENTATION_CLOCKWISE_90_AND_FLIP_HORIZONTAL) ||
+                        orientation.equals(PictureListItem.EXIF_IMAGE_ORIENTATION_CLOCKWISE_270_AND_FLIP_HORIZONTAL) ) {
+                    bm_width=input_bitmap.getHeight();
+                    bm_height=input_bitmap.getWidth();
+                } else {
+                    bm_height=input_bitmap.getHeight();
+                    bm_width=input_bitmap.getWidth();
+                }
+                bm_height=input_bitmap.getHeight();
+                bm_width=input_bitmap.getWidth();
+
+                float scale=getFitImageSize(bm_width, bm_height);
+
+                int o_h=0, o_w=0;
+                o_w=(int)((float)input_bitmap.getWidth()/scale);
+                o_h=(int)((float)input_bitmap.getHeight()/scale);
+
 //			Log.v("","s_w="+scale_width+", s_h="+scale_height+", scale="+scale+", o_w="+o_w+", o_h="+o_h);
-			Bitmap output_bitmap=null;
-			if (scale!=1.0f) {
-				output_bitmap=Bitmap.createScaledBitmap(input_bitmap, o_w, o_h, true);
-				input_bitmap.recycle();
-			} else output_bitmap=input_bitmap;
-			Bitmap rot_bm=rotateBitmapByPictureOrientation(output_bitmap, orientation);
-			
-	    	if (gp.settingDebugLevel>1)  
-	    		Log.v(APPLICATION_TAG,"Picture bit map created"+
-	    			", Display height="+disp_metrics.heightPixels+", width="+disp_metrics.widthPixels+
-	    			", Density="+disp_metrics.density+
-	    			", Original Bitmap height="+org_opt.outHeight+", width="+org_opt.outWidth+
-	    			", Size="+input_bitmap.getByteCount()+
-	    			", Scale="+scale+
-	    			", Resized Bitmap height="+rot_bm.getHeight()+", width="+rot_bm.getWidth()+", size="+rot_bm.getByteCount()+
-	    			", Decode time="+decoded_time+
-	    			", Elapsed time="+(System.currentTimeMillis()-b_time)+
-	    			", fp="+fp);
-			return rot_bm;
-		} else {
-	    	if (gp.settingDebugLevel>1)  
-	    		Log.v(APPLICATION_TAG,"Picture dummy bit map created"+
-	    			", Elapsed time="+(System.currentTimeMillis()-b_time)+
-	    			", fp="+fp);
-			return null;
-		}
+                Bitmap output_bitmap=null;
+                if (scale!=1.0f) {
+                    output_bitmap=Bitmap.createScaledBitmap(input_bitmap, o_w, o_h, true);
+                    input_bitmap.recycle();
+                } else output_bitmap=input_bitmap;
+                Bitmap rot_bm=rotateBitmapByPictureOrientation(output_bitmap, orientation);
+
+                if (gp.settingDebugLevel>1)
+                    gp.cUtil.addDebugMsg(1,"I","createPictureFileBitmap Picture bit map created"+
+                            ", Display height="+disp_metrics.heightPixels+", width="+disp_metrics.widthPixels+
+                            ", Density="+disp_metrics.density+
+                            ", Original Bitmap height="+org_opt.outHeight+", width="+org_opt.outWidth+
+                            ", Size="+input_bitmap.getByteCount()+
+                            ", Scale="+scale+
+                            ", Resized Bitmap height="+rot_bm.getHeight()+", width="+rot_bm.getWidth()+", size="+rot_bm.getByteCount()+
+                            ", Decode time="+decoded_time+
+                            ", Elapsed time="+(System.currentTimeMillis()-b_time)+
+                            ", fp="+fp);
+                return rot_bm;
+            } else {
+                if (gp.settingDebugLevel>1)
+                    gp.cUtil.addDebugMsg(1,"I","createPictureFileBitmap Picture dummy bit map created"+
+                            ", Elapsed time="+(System.currentTimeMillis()-b_time)+
+                            ", fp="+fp);
+                return null;
+            }
+        } else {
+            if (gp.settingDebugLevel>1)
+                gp.cUtil.addDebugMsg(1,"I","createPictureFileBitmap null bm_array"+
+                        ", Elapsed time="+(System.currentTimeMillis()-b_time)+
+                        ", fp="+fp);
+    	    return null;
+        }
     };
 
     private static float getFitImageSize(int bm_width, int bm_height) {
@@ -724,7 +730,7 @@ public class PictureUtil {
 	};
 
 	
-	final static public byte[] createImageByteArrayWithResize(boolean debug, int max_width, int image_quality,
+	final static public byte[] createImageByteArrayWithResize(GlobalParameters gp, boolean debug, int max_width, int image_quality,
 			String fp, String orientation) {
 		byte[] bm_result=null;
 		File lf=new File(fp);
@@ -753,8 +759,8 @@ public class PictureUtil {
 			bitmap.recycle();
 			bmp.recycle();
 			bm_result=bos.toByteArray();
-			if (debug) 
-				Log.v(APPLICATION_TAG,"Image file="+fp+
+			if (debug)
+                gp.cUtil.addDebugMsg(1,"I","Image file="+fp+
 						", Original Image Size: " + imageOptions.outWidth +
 						" x " + imageOptions.outHeight+
 						", Scale factor="+imageOptions2.inSampleSize+", bitmap array size="+bm_result.length);
@@ -767,7 +773,7 @@ public class PictureUtil {
 		return bm_result;
 	};
 
-	final static public byte[] createImageByteArray(String fp) {
+	final static private byte[] createImageByteArray(GlobalParameters gp, String fp) {
 //		long b_time=System.currentTimeMillis();
 		byte[] bm_result=null;
 		File lf=new File(fp);
@@ -777,8 +783,11 @@ public class PictureUtil {
 			fis.read(bm_file);
 			fis.close();
 			bm_result=bm_file;
+			if (gp.settingDebugLevel>=1)
+                gp.cUtil.addDebugMsg(1,"I","createImageByteArray result="+bm_result+", fp="+fp);
 //			Log.v("","elapsed="+(System.currentTimeMillis()-b_time)+", name="+fp);
 		} catch (IOException e) {
+		    gp.cUtil.addDebugMsg(1,"I","createImageByteArray error="+e.getMessage()+", fp="+fp);
 //			e.printStackTrace();
 		}
 		return bm_result;

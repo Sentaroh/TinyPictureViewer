@@ -211,17 +211,22 @@ public class PictureListItem implements Externalizable, Comparable<PictureListIt
 
 	
 	private boolean debug_enabled=false;
-	
+
+	private GlobalParameters mGp=null;
+
 	public PictureListItem(boolean debug, File pic_file) {
+        mGp=null;
 		debug_enabled=debug;
 		createFileInfo(pic_file);
 	};
 
 	public PictureListItem(boolean debug) {
+        mGp=null;
 		debug_enabled=debug;
 	};
 
 	public PictureListItem() {
+        mGp=GlobalWorkArea.getGlobalParameters(null);
 	};
 
 	@SuppressLint("SimpleDateFormat")
@@ -494,7 +499,7 @@ public class PictureListItem implements Externalizable, Comparable<PictureListIt
 				org_bitmap.recycle();
 			}
 		} else {
-			result=PictureUtil.createImageByteArrayWithResize(debug_enabled, 512, 20, fp, orientation);
+			result=PictureUtil.createImageByteArrayWithResize(mGp, debug_enabled, 512, 20, fp, orientation);
 		}
 		setThumbnailVerified(true);
 		return result;

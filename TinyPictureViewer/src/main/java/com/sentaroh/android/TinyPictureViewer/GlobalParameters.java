@@ -28,6 +28,7 @@ import static com.sentaroh.android.TinyPictureViewer.Log.LogConstants.*;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.sentaroh.android.TinyPictureViewer.Log.LogUtil;
 import com.sentaroh.android.TinyPictureViewer.PictureUtil.PictureFileCacheItem;
 import com.sentaroh.android.Utilities.CommonGlobalParms;
 import com.sentaroh.android.Utilities.SafManager;
@@ -70,7 +71,9 @@ public class GlobalParameters extends CommonGlobalParms {
 //	public ISvcCallback callbackStub=null;
 
 	public Context appContext=null;
-	
+
+	public CommonUtilities cUtil=null;
+
 	public boolean debuggable=false;
 
 	public boolean externalStorageIsMounted=false;
