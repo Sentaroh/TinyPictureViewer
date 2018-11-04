@@ -18,6 +18,7 @@ import android.os.SystemClock;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
@@ -361,6 +362,15 @@ public class PictureView {
 	};
 	
 	private void setPictureViewListener() {
+        mGp.picturePrevBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+				Toast toast = Toast.makeText(mContext, mContext.getString(R.string.msgs_main_oper_label_show_previous), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+                return true;
+            }
+        });
 		mGp.picturePrevBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -381,6 +391,15 @@ public class PictureView {
 			}
 		});
 
+        mGp.pictureNextBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.msgs_main_oper_label_show_next), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            }
+        });
 		mGp.pictureNextBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -401,6 +420,15 @@ public class PictureView {
 			}
 		});
 
+        mGp.pictureZoomInBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.msgs_main_oper_label_zoom_in), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            }
+        });
 		mGp.pictureZoomInBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -424,7 +452,16 @@ public class PictureView {
 //				toast.show();
 			}
 		});
-		
+
+        mGp.pictureZoomOutBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.msgs_main_oper_label_zoom_out), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            }
+        });
 		mGp.pictureZoomOutBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -447,7 +484,16 @@ public class PictureView {
 //				toast.show();
 			}
 		});
-		
+
+        mGp.pictureRotatePictureLeftBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.msgs_main_oper_label_rotate_left), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            }
+        });
 		mGp.pictureRotatePictureRightBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -455,7 +501,16 @@ public class PictureView {
 				rotatePicture(true);
 			}
 		});
-		
+
+        mGp.pictureRotatePictureRightBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.msgs_main_oper_label_rotate_right), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            }
+        });
 		mGp.pictureRotatePictureLeftBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -463,7 +518,16 @@ public class PictureView {
 				rotatePicture(false);
 			}
 		});
-		
+
+        mGp.pictureLockZoomBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.msgs_main_oper_label_lock_zoom_and_pos), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            }
+        });
 		mGp.pictureLockZoomBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -487,7 +551,16 @@ public class PictureView {
 				}
 			}
 		});
-		
+
+        mGp.pictureLockScreenRotationBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.msgs_main_oper_label_lock_phone_orientation), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            }
+        });
 		mGp.pictureLockScreenRotationBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -507,7 +580,16 @@ public class PictureView {
 				}
 			}
 		});
-		
+
+        mGp.pictureResetBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.msgs_main_oper_label_revert), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            }
+        });
 		mGp.pictureResetBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -557,7 +639,16 @@ public class PictureView {
 				th.start();
 			}
 		});
-		
+
+        mGp.pictureShareBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.msgs_main_oper_label_share_picture), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            }
+        });
 		mGp.pictureShareBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -566,8 +657,17 @@ public class PictureView {
 				String[] send_pic_fp=new String[]{mGp.adapterPictureView.getPictureWorkList().get(pos).image_file_path};
 				CommonUtilities.sharePictures(mContext, send_pic_fp);
 			}
-		}); 
-		
+		});
+
+        mGp.pictureWallpaperBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.msgs_main_oper_label_wall_paper), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            }
+        });
 		mGp.pictureWallpaperBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -575,8 +675,17 @@ public class PictureView {
 				int pos=mGp.customViewPager.getCurrentItem();
 				PictureUtil.invokeWallPaperEditor(mContext, mGp.adapterPictureView.getPictureWorkList().get(pos).image_file_path);
 			}
-		}); 
-		
+		});
+
+        mGp.pictureShowMapBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.msgs_main_oper_label_show_maps), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            }
+        });
 		mGp.pictureShowMapBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -600,7 +709,16 @@ public class PictureView {
 				}
 			}
 		});
-		
+
+        mGp.pictureDeleteBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.msgs_main_oper_label_delete_picture), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            }
+        });
 		mGp.pictureDeleteBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {

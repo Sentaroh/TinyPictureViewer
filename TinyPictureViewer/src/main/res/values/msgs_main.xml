@@ -87,6 +87,20 @@
 	<string name="msgs_main_cont_label_paste">Paste</string>
 	<string name="msgs_main_cont_label_media_file_scan">Scan media file</string>
 
+    <string name="msgs_main_oper_label_show_previous">Show previous image</string>
+    <string name="msgs_main_oper_label_show_next">Show next image</string>
+    <string name="msgs_main_oper_label_delete_picture">Delete this picture</string>
+    <string name="msgs_main_oper_label_show_maps">Invoke Map app</string>
+    <string name="msgs_main_oper_label_revert">Revert zoom and picture orientation</string>
+    <string name="msgs_main_oper_label_rotate_left">Rotate picture counterclockwise 90 degree</string>
+    <string name="msgs_main_oper_label_rotate_right">Rotate picture clockwise 90 degree</string>
+    <string name="msgs_main_oper_label_zoom_in">Zoom in</string>
+    <string name="msgs_main_oper_label_zoom_out">Zoom out</string>
+    <string name="msgs_main_oper_label_wall_paper">Invoke Wallpaper app</string>
+    <string name="msgs_main_oper_label_lock_zoom_and_pos">Lock/Unlock zoom and position</string>
+    <string name="msgs_main_oper_label_lock_phone_orientation">Lock/Unlock screen orientation</string>
+    <string name="msgs_main_oper_label_share_picture">Share this picture</string>
+
 	<string name="msgs_main_map_activity_not_found">Map app can not be found.</string>
 	
 	<string name="msgs_main_file_rename_title">Rename</string>

@@ -83,7 +83,21 @@
 	<string name="msgs_main_cont_label_cut">カット</string>
 	<string name="msgs_main_cont_label_paste">貼付け</string>
 	<string name="msgs_main_cont_label_media_file_scan">メディアファイルのスキャン</string>
-	
+
+    <string name="msgs_main_oper_label_show_previous">前の写真を表示</string>
+    <string name="msgs_main_oper_label_show_next">次の写真を表示</string>
+    <string name="msgs_main_oper_label_delete_picture">表示している写真を削除</string>
+    <string name="msgs_main_oper_label_show_maps">マップアプリを起動する</string>
+    <string name="msgs_main_oper_label_revert">ズームと回転を元に戻す</string>
+    <string name="msgs_main_oper_label_rotate_left">写真を反時計回りに90度回転する</string>
+    <string name="msgs_main_oper_label_rotate_right">写真を時計回りに90度回転する</string>
+    <string name="msgs_main_oper_label_zoom_in">ズームイン</string>
+    <string name="msgs_main_oper_label_zoom_out">ズームアウト</string>
+    <string name="msgs_main_oper_label_wall_paper">壁紙アプリを起動する</string>
+    <string name="msgs_main_oper_label_lock_zoom_and_pos">ズームと表示位置の固定/解除</string>
+    <string name="msgs_main_oper_label_lock_phone_orientation">画面回転の固定/解除</string>
+    <string name="msgs_main_oper_label_share_picture">共有するアプリの選択</string>
+
 	<string name="msgs_main_map_activity_not_found">マップ表示アプリが見つかりません。</string>
 	
 	<string name="msgs_main_file_rename_title">名前の変更</string>
