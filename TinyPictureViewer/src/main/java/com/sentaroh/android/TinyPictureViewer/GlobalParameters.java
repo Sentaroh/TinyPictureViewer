@@ -332,7 +332,8 @@ public class GlobalParameters extends CommonGlobalParms {
 	};
 	
 	public void refreshMediaDir(Context c) {
-		File[] fl=ContextCompat.getExternalFilesDirs(c, null);
+//		File[] fl=ContextCompat.getExternalFilesDirs(c, null);
+        File[] fl=c.getExternalFilesDirs(null);
 		if (fl!=null) {
 			for(File item:fl) {
 				if (item!=null && !item.getAbsolutePath().startsWith(internalRootDirectory)) {

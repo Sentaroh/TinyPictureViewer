@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import com.sentaroh.android.Utilities.Dialog.CommonDialog;
 import com.sentaroh.android.Utilities.NotifyEvent;
 import com.sentaroh.android.Utilities.StringUtil;
 
@@ -187,7 +188,8 @@ public class AdapterFolderList extends BaseAdapter {
 	  public boolean isAdapterEnabled() {
 		  return mAdapterEnabled;
 	  }
-	  
+
+	  private boolean mCacheCreateWarningIssued=false;
 	  @SuppressLint("InflateParams")
 	  public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -217,32 +219,39 @@ public class AdapterFolderList extends BaseAdapter {
 			  FolderListItem fli=getItem(position);
 			  if (fli.getThumbnailArray()!=null) {
 				  Bitmap bm=BitmapFactory.decodeByteArray(fli.getThumbnailArray(), 0, fli.getThumbnailArray().length);
-				  int b_w=bm.getWidth();
-				  int b_h=bm.getHeight();
-				  
-				  Matrix matrix=new Matrix();
+				  if (bm!=null) {
+                      int b_w=bm.getWidth();
+                      int b_h=bm.getHeight();
 
-				  float scale_w=(float)mViewWidth/(float)b_w;
-				  float scale_h=(float)mViewHeight/(float)b_h;
-				  float scale=Math.min(scale_w, scale_h); 
-				  
-//				  Log.v("","b_w="+b_w+", b_h="+b_h+", m_w="+mViewWidth+", m_h="+mViewHeight+", s_w="+scale_w+", s_h="+scale_h);
-				  
-				  matrix.postScale(scale, scale);
-				    
-				  int s_w=Math.round((float)b_w*scale);
-				  if (s_w<mViewWidth) {
-					  int translate_val=Math.abs(mViewWidth-s_w);
-					  if (translate_val>1) {
-//				    		Log.v("","name="+getItem(position).getFileName()+", translate="+(float)(translate_val/2));
-				    		matrix.postTranslate((float)(translate_val/2), 0.0f);		
-					  }
-				  }
-				  holder.image_view.setScaleType(ScaleType.MATRIX);
-				  holder.image_view.setImageMatrix(matrix);
-//				  holder.image_view.setScaleType(ScaleType.FIT_CENTER);
-				  holder.image_view.setImageBitmap(bm);
-				  holder.image_view.setBackgroundColor(Color.BLACK);
+                      Matrix matrix=new Matrix();
+
+                      float scale_w=(float)mViewWidth/(float)b_w;
+                      float scale_h=(float)mViewHeight/(float)b_h;
+                      float scale=Math.min(scale_w, scale_h);
+
+                      matrix.postScale(scale, scale);
+
+                      int s_w=Math.round((float)b_w*scale);
+                      if (s_w<mViewWidth) {
+                          int translate_val=Math.abs(mViewWidth-s_w);
+                          if (translate_val>1) {
+                              matrix.postTranslate((float)(translate_val/2), 0.0f);
+                          }
+                      }
+                      holder.image_view.setScaleType(ScaleType.MATRIX);
+                      holder.image_view.setImageMatrix(matrix);
+
+                      holder.image_view.setImageBitmap(bm);
+                      holder.image_view.setBackgroundColor(Color.BLACK);
+                  } else {
+                      holder.image_view.setScaleType(ScaleType.FIT_CENTER);
+                      holder.image_view.setImageDrawable(mDummyThumbnail);
+                      if (!mCacheCreateWarningIssued) {
+                          mCacheCreateWarningIssued=true;
+                          CommonDialog cd=new CommonDialog(mActivity.getApplicationContext(), mActivity.getSupportFragmentManager());
+                          cd.showCommonDialog(false, "W", mActivity.getApplicationContext().getString(R.string.msgs_main_picture_cache_file_may_be_corrupted), "", null);
+                      }
+                  }
 			  } else {
 				  holder.image_view.setScaleType(ScaleType.FIT_CENTER);
 				  holder.image_view.setImageDrawable(mDummyThumbnail);
@@ -250,7 +259,7 @@ public class AdapterFolderList extends BaseAdapter {
 			  holder.folder_name.setText(fli.getFolderName());
 			  holder.directory.setText(fli.getParentDirectory());
 			  holder.no_of_pictures.setText(
-					  String.format(mActivity.getString(R.string.msgs_main_folder_view_no_of_pictures), fli.getNoOfPictures()));
+					  String.format(mActivity.getApplicationContext().getString(R.string.msgs_main_folder_view_no_of_pictures), fli.getNoOfPictures()));
 			  holder.latest_picture_time.setText(StringUtil.convDateTimeTo_YearMonthDayHourMinSec(fli.getFileLastModified()));
 			  
 			  if (fli.isEnabled()) holder.folder_desc_view.setAlpha(1.0f);

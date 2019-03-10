@@ -257,7 +257,8 @@ public final class CommonUtilities {
 //			c.getExternalFilesDirs(null);
 //		} else {
 //		}
-		ContextCompat.getExternalFilesDirs(c, null);
+//		ContextCompat.getExternalFilesDirs(c, null);
+        c.getExternalFilesDirs(null);
 	};
 	
 	static public void setCheckedTextView(final CheckedTextView ctv) {

@@ -151,7 +151,7 @@
 	
 	<string name="msgs_main_picture_reset_zoom_and_rotation">reset all pictures zoom and rotation.</string>
 
-	<string name="msgs_main_picture_cache_file_does_not_load">Cache file can not load, perform Refresh file list.</string>
+	<string name="msgs_main_picture_cache_file_may_be_corrupted">The cache file may be corrupted. Please go to "Clear all cache" in the app settings.</string>
 	
 	<string name="msgs_main_folder_view_title">%s Folders</string>
 	

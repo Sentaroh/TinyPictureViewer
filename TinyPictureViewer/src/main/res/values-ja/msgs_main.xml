@@ -148,8 +148,8 @@
 	
 	<string name="msgs_main_picture_reset_zoom_and_rotation">写真のズームと回転をリセットしました。</string>
 
-	<string name="msgs_main_picture_cache_file_does_not_load">キャッシュファイルが読み込めません、ファイル読込みを行ってください。</string>
-	
+    <string name="msgs_main_picture_cache_file_may_be_corrupted">キャッシュファイルが壊れている可能性があります。設定で「キャッシュの削除」を行ってください。</string>
+
 	<string name="msgs_main_folder_view_title">%s フォルダー</string>
 	
 	<string name="msgs_main_folder_view_no_of_pictures">%s ファイル</string>
