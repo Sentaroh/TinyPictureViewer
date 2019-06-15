@@ -34,6 +34,7 @@
     </GridView>
 
     <include layout="@layout/context_view_clipboard" />
+    <include layout="@layout/context_view_sdcard_warning" />
     <include layout="@layout/context_view_thumbnail" />
 
 </LinearLayout>

@@ -22,7 +22,7 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
 
             applicationVariants.all { variant ->
                 if (variant.buildType.name.equals("debug")) {
@@ -30,9 +30,8 @@ android {
                         def versionName = variant.versionName
                         def versionNumber = variant.versionCode.toString()
                         def date = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())
-                        def mod_name = variant.getPackageApplication().projectBaseName
+                        def mod_name = "${rootProject.name}"
                         def fileExtension= outputFileName.toString().substring(outputFileName.toString().lastIndexOf(".")+1)
-//                        def newName = "${mod_name}_${versionName}_${versionNumber}_${date}.${fileExtension}"
                         def newName = "${mod_name}_debug.${fileExtension}"
                         outputFileName = "../../../../../release/"+newName
                     }
@@ -40,7 +39,6 @@ android {
             }
 
         }
-
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
@@ -51,9 +49,8 @@ android {
                         def versionName = variant.versionName
                         def versionNumber = variant.versionCode.toString()
                         def date = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())
-                        def mod_name = variant.getPackageApplication().projectBaseName
+                        def mod_name = "${rootProject.name}"
                         def fileExtension= outputFileName.toString().substring(outputFileName.toString().lastIndexOf(".")+1)
-//                        def newName = "${mod_name}_${versionName}_${versionNumber}_${date}.${fileExtension}"
                         def newName = "${mod_name}_${versionName}_${versionNumber}_release.${fileExtension}"
                         outputFileName = newName
                     }
@@ -67,7 +64,7 @@ android {
 dependencies {
 //    implementation project(':Utilities')
 //    implementation(name:'Utilities-1.0.5', ext:'aar')
-    implementation files('libs/Utilities-1.0.15.aar')
+    implementation files('libs/Utilities-1.0.16.aar')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation files('libs/metadata-extractor-2.9.1.jar')
     implementation files('libs/xmpcore-5.1.2.jar')

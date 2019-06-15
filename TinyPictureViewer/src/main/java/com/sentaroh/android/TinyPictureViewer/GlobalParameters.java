@@ -23,12 +23,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 */
 import static com.sentaroh.android.TinyPictureViewer.Constants.*;
-import static com.sentaroh.android.TinyPictureViewer.Log.LogConstants.*;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import com.sentaroh.android.TinyPictureViewer.Log.LogUtil;
 import com.sentaroh.android.TinyPictureViewer.PictureUtil.PictureFileCacheItem;
 import com.sentaroh.android.Utilities.CommonGlobalParms;
 import com.sentaroh.android.Utilities.SafManager;
@@ -47,7 +45,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.widget.Button;
 import android.widget.GridView;
@@ -177,7 +174,10 @@ public class GlobalParameters extends CommonGlobalParms {
 	public ImageView contextClipBoardIcon=null;
     public TextView contextClipBoardText=null;
     public Button contextClipBoardClear=null;
-	
+
+    public LinearLayout contextSdcardWarningView=null;
+    public TextView contextSdcardWarningMessage=null;
+
 	public Spinner spinnerPictureSelector=null;
 	public CustomActionBarSpinnerAdapter adapterPictureSelectorSpinner=null;
 	public int selectPictureDateSpinnerPosition=0;

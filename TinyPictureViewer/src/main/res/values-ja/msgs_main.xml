@@ -9,16 +9,16 @@
     <string name="msgs_main_exit_confirm_msg">アプリケーションを終了しますか？</string>
     <string name="msgs_main_kill_confirm_msg">アプリケーションを強制終了しますか？</string>
     
-	<string name="msgs_main_external_sdcard_select_required_title">外部SDCARDの選択</string>
-	<string name="msgs_main_external_sdcard_select_required_select_msg_api21">外部SDCARDにアクセスするために、ステップ１.「SDCARD」をタップしてください、ステップ２.その後表示された画面で「ＳＤＣＡＲＤを選択」をタップしてください。\n
+	<string name="msgs_main_external_sdcard_select_required_title">外部SDCARDの書込み許可</string>
+	<string name="msgs_main_external_sdcard_select_required_select_msg_api21">外部SDCARDに書込みをするために、ステップ１.「SDCARD」をタップしてください、ステップ２.その後表示された画面で「ＳＤＣＡＲＤを選択」をタップしてください。\n
 (ステップ２の「ＳＤＣＡＲＤを選択」の画面が直接表示された時は「ＳＤＣＡＲＤを選択」をタップしてください)</string>
-	<string name="msgs_main_external_sdcard_select_required_select_msg_api23">外部SDCARDにアクセスするために、ステップ１.「SDCARD」をタップしてください、ステップ２.その後表示された画面で「選択」をタップしてください。\n
+	<string name="msgs_main_external_sdcard_select_required_select_msg_api23">外部SDCARDに書込みをするために、ステップ１.「SDCARD」をタップしてください、ステップ２.その後表示された画面で「選択」をタップしてください。\n
 (ステップ２で左上に「ＳＤＣＡＲＤ」の画面が直接表示された時は「選択」をタップしてください。左上に「ＳＤＣＡＲＤ」以外が表示されている場合は左上のメニューをタップし、ステップ１からやり直してください。)</string>
 	<string name="msgs_main_external_sdcard_select_retry_select_msg">外部SDCARDのルートディレクトリが選択されませんでした。選択しなおしますか？</string>
     <string name="msgs_main_external_sdcard_usb_retry_select_msg">USBストレージが選択されましたがUSBストレージは使用できません。選択しなおしますか？</string>
 	<string name="msgs_main_external_sdcard_select_required_select_msg_file_api21">SMBSync_SD_CARD_5.0_JA.png</string>
 	<string name="msgs_main_external_sdcard_select_required_select_msg_file_api23">SMBSync_SD_CARD_6.0_JA.png</string>
-	<string name="msgs_main_external_sdcard_select_required_cancel_msg">外部SDCARDが選択されるまで削除や改名ができません。</string>
+	<string name="msgs_main_external_sdcard_select_required_cancel_msg">外部SDCARDへの書込みが許可されるまで削除や改名ができません。</string>
 	
 	<string name="msgs_main_permission_external_storage_title">内部ストレージ許可</string>
 	<string name="msgs_main_permission_external_storage_request_msg">内部ストレージの写真や管理用データの読み書きを行うために、内部ストレージにアクセスする許可を与えてください。</string>

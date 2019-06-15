@@ -18,6 +18,8 @@ import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+
 import com.sentaroh.android.TinyPictureViewer.Log.LogFileListDialogFragment;
 import com.sentaroh.android.Utilities.ContentProviderUtil;
 import com.sentaroh.android.Utilities.NotifyEvent;
@@ -39,8 +41,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -50,7 +50,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -60,6 +59,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.os.SystemClock;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -242,7 +243,11 @@ public class ActivityMain extends AppCompatActivity {
                                mContext.getString(R.string.msgs_main_external_sdcard_select_required_cancel_msg), "", null);
                    }
                });
-               showSelectSdcardMsg(ntfy);
+               if (Build.VERSION.SDK_INT>=24 && Build.VERSION.SDK_INT<=28) {
+                   ntfy.notifyToListener(true, null);
+               } else {
+                   showSelectSdcardMsg(ntfy);
+               }
     	       break;
     	   }
        }
@@ -513,7 +518,10 @@ public class ActivityMain extends AppCompatActivity {
 
 		if (mGp.debuggable) menu.findItem(R.id.menu_top_switch_test_mode).setVisible(true);
 		else menu.findItem(R.id.menu_top_switch_test_mode).setVisible(false);
-		
+
+		if (mGp.safMgr.getSdcardRootPath().equals(SafManager.UNKNOWN_SDCARD_DIRECTORY)) menu.findItem(R.id.menu_top_show_sdcard_selector).setVisible(true);
+		else menu.findItem(R.id.menu_top_show_sdcard_selector).setVisible(false);
+
 		if (mGp.currentView==CURRENT_VIEW_FOLDER) {
 			menu.findItem(R.id.menu_top_sort_thumbnail).setVisible(false);
 			menu.findItem(R.id.menu_top_edit_scan_folder).setVisible(true);
@@ -1056,8 +1064,11 @@ public class ActivityMain extends AppCompatActivity {
 			}
 		});
 		mUtil.flushLog();
-		LogFileListDialogFragment lfm=
-				LogFileListDialogFragment.newInstance(false, getString(R.string.msgs_log_management_title));
+        LogFileListDialogFragment lfm =
+                LogFileListDialogFragment.newInstance(false, getString(R.string.msgs_log_management_title),
+                        getString(R.string.msgs_log_management_send_log_file_warning),
+                        getString(R.string.msgs_log_management_enable_log_file_warning),
+                        "TinyPictureViewer log file");
 		lfm.showDialog(getSupportFragmentManager(), lfm, mGp, ntfy);
 	};
 
@@ -1101,6 +1112,7 @@ public class ActivityMain extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (REQUEST_PERMISSIONS_WRITE_EXTERNAL_STORAGE == requestCode) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                checkSdcardAccess();
                 mGp.createCacheDiretory();
                 refreshFileList();
             } else {
@@ -1128,6 +1140,7 @@ public class ActivityMain extends AppCompatActivity {
 		if (requestCode==0) applySettingParms();
 		else if (requestCode == ACTIVITY_REQUEST_CODE_SDCARD_STORAGE_ACCESS) {
 			mUtil.addDebugMsg(1,"I","Return from Storage Picker. id="+requestCode);
+            mSdcardAccessRequestIssued=false;
 	        if (resultCode == Activity.RESULT_OK) {
 	        	mUtil.addDebugMsg(1,"I","Intent="+data.getData().toString());
                 if (mGp.safMgr.isUsbUuid(SafManager.getUuidFromUri(data.getData().toString()))) {
@@ -1170,7 +1183,11 @@ public class ActivityMain extends AppCompatActivity {
                                 null);
                     }
                 });
-                showSelectSdcardMsg(ntfy);
+                if (Build.VERSION.SDK_INT>=24 && Build.VERSION.SDK_INT<=28) {
+                    ntfy.notifyToListener(true, null);
+                } else {
+                    showSelectSdcardMsg(ntfy);
+                }
             }
             @Override
             public void negativeResponse(Context c, Object[] o) {
@@ -1427,8 +1444,11 @@ public class ActivityMain extends AppCompatActivity {
         mGp.contextClipBoardIcon=(ImageView)ll_thumbnail.findViewById(R.id.context_view_clipboard_icon);
         mGp.contextClipBoardText=(TextView)ll_thumbnail.findViewById(R.id.context_view_clipboard_text);
         mGp.contextClipBoardClear=(Button)ll_thumbnail.findViewById(R.id.context_view_clipboard_clear);
-		
-		mPictureView.createView();
+
+        mGp.contextSdcardWarningView=(LinearLayout)ll_thumbnail.findViewById(R.id.context_view_sdcard_warning_view);
+        mGp.contextSdcardWarningMessage=(TextView)ll_thumbnail.findViewById(R.id.context_view_sdcard_warning_message);
+
+        mPictureView.createView();
 
 	};
 
@@ -1669,7 +1689,8 @@ public class ActivityMain extends AppCompatActivity {
     private void setFolderViewContextButtonVisibility() {
     	boolean sdcard_usable=true;
 		if (mGp.safMgr.getSdcardRootSafFile()==null) sdcard_usable=false;
-    	
+    	if (sdcard_usable) mGp.contextSdcardWarningView.setVisibility(LinearLayout.GONE);
+    	else mGp.contextSdcardWarningView.setVisibility(LinearLayout.VISIBLE);
     	if (mGp.adapterFolderView.getCount()>0) {
         	if (mGp.adapterFolderView.getSelectedItemCount()>0) {
         		mGp.contextButtonFolderMediaFileScanView.setVisibility(LinearLayout.VISIBLE);
@@ -1728,9 +1749,9 @@ public class ActivityMain extends AppCompatActivity {
 		dlg_view.setBackgroundResource(R.drawable.dialog_border_dark);
 		
 		final LinearLayout title_view = (LinearLayout) dialog.findViewById(R.id.single_item_input_title_view);
-		title_view.setBackgroundColor(mGp.themeColorList.dialog_title_background_color);
+		title_view.setBackgroundColor(mGp.themeColorList.title_background_color);
 		final TextView dlg_title = (TextView) dialog.findViewById(R.id.single_item_input_title);
-		dlg_title.setTextColor(mGp.themeColorList.text_color_dialog_title);
+		dlg_title.setTextColor(mGp.themeColorList.title_text_color);
 		dlg_title.setText(mContext.getString(R.string.msgs_main_file_rename_title));
 		final TextView dlg_msg = (TextView) dialog.findViewById(R.id.single_item_input_msg);
 		final TextView dlg_cmp = (TextView) dialog.findViewById(R.id.single_item_input_name);
@@ -2879,9 +2900,9 @@ public class ActivityMain extends AppCompatActivity {
 		dlg_view.setBackgroundResource(R.drawable.dialog_border_dark);
 		
 		final LinearLayout title_view = (LinearLayout) dialog.findViewById(R.id.single_item_input_title_view);
-		title_view.setBackgroundColor(mGp.themeColorList.dialog_title_background_color);
+		title_view.setBackgroundColor(mGp.themeColorList.title_background_color);
 		final TextView dlg_title = (TextView) dialog.findViewById(R.id.single_item_input_title);
-		dlg_title.setTextColor(mGp.themeColorList.text_color_dialog_title);
+		dlg_title.setTextColor(mGp.themeColorList.title_text_color);
 		dlg_title.setText(mContext.getString(R.string.msgs_main_file_rename_title));
 		final TextView dlg_msg = (TextView) dialog.findViewById(R.id.single_item_input_msg);
 		final TextView dlg_cmp = (TextView) dialog.findViewById(R.id.single_item_input_name);
@@ -3012,9 +3033,9 @@ public class ActivityMain extends AppCompatActivity {
         dlg_view.setBackgroundResource(R.drawable.dialog_border_dark);
 
         final LinearLayout title_view = (LinearLayout) dialog.findViewById(R.id.single_item_input_title_view);
-        title_view.setBackgroundColor(mGp.themeColorList.dialog_title_background_color);
+        title_view.setBackgroundColor(mGp.themeColorList.title_background_color);
         final TextView dlg_title = (TextView) dialog.findViewById(R.id.single_item_input_title);
-        dlg_title.setTextColor(mGp.themeColorList.text_color_dialog_title);
+        dlg_title.setTextColor(mGp.themeColorList.title_text_color);
         dlg_title.setText(mContext.getString(R.string.msgs_main_file_rename_title));
         final TextView dlg_msg = (TextView) dialog.findViewById(R.id.single_item_input_msg);
         final TextView dlg_cmp = (TextView) dialog.findViewById(R.id.single_item_input_name);
@@ -4003,8 +4024,8 @@ public class ActivityMain extends AppCompatActivity {
 
 		final LinearLayout title_view = (LinearLayout) dialog.findViewById(R.id.edit_scan_folder_dlg_title_view);
 		final TextView title = (TextView) dialog.findViewById(R.id.edit_scan_folder_dlg_title);
-		title_view.setBackgroundColor(mGp.themeColorList.dialog_title_background_color);
-		title.setTextColor(mGp.themeColorList.text_color_dialog_title);
+		title_view.setBackgroundColor(mGp.themeColorList.title_background_color);
+		title.setTextColor(mGp.themeColorList.title_text_color);
 		
 		@SuppressWarnings("unused")
 		final TextView dlg_msg=(TextView)dialog.findViewById(R.id.edit_scan_folder_dlg_msg);
@@ -4196,9 +4217,36 @@ public class ActivityMain extends AppCompatActivity {
 		}
 	};
 
+	private boolean mSdcardAccessRequestIssued=false;
 	public void startSdcardPicker() {
-		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-	    startActivityForResult(intent, ACTIVITY_REQUEST_CODE_SDCARD_STORAGE_ACCESS);
+	    if (mSdcardAccessRequestIssued) {
+	        mUtil.addDebugMsg(1,"I","startSdcardPicker SDCARD access request already issued");
+	        return;
+        }
+        if (Build.VERSION.SDK_INT>=24 && Build.VERSION.SDK_INT<=28) {
+            StorageManager sm = (StorageManager) mContext.getSystemService(Context.STORAGE_SERVICE);
+            List<StorageVolume> vol_list=sm.getStorageVolumes();
+            StorageVolume sdcard_sv=null;
+            for(StorageVolume item:vol_list) {
+                if (item.getDescription(mContext).startsWith("SD")) {
+                    sdcard_sv=item;
+                    break;
+                }
+            }
+            if (sdcard_sv!=null) {
+                mSdcardAccessRequestIssued=true;
+                Intent intent = sdcard_sv.createAccessIntent(null);
+                startActivityForResult(intent, ACTIVITY_REQUEST_CODE_SDCARD_STORAGE_ACCESS);
+            } else {
+                mSdcardAccessRequestIssued=true;
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                startActivityForResult(intent, ACTIVITY_REQUEST_CODE_SDCARD_STORAGE_ACCESS);
+            }
+        } else {
+            mSdcardAccessRequestIssued=true;
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            startActivityForResult(intent, ACTIVITY_REQUEST_CODE_SDCARD_STORAGE_ACCESS);
+        }
 	};
 	
 	public void showSelectSdcardMsg(final NotifyEvent ntfy) {
@@ -4208,8 +4256,8 @@ public class ActivityMain extends AppCompatActivity {
 
 		final LinearLayout title_view = (LinearLayout) dialog.findViewById(R.id.show_select_sdcard_dlg_title_view);
 		final TextView title = (TextView) dialog.findViewById(R.id.show_select_sdcard_dlg_title);
-		title_view.setBackgroundColor(mGp.themeColorList.dialog_title_background_color);
-		title.setTextColor(mGp.themeColorList.text_color_dialog_title);
+		title_view.setBackgroundColor(mGp.themeColorList.title_background_color);
+		title.setTextColor(mGp.themeColorList.title_text_color);
 		
 		final TextView dlg_msg=(TextView)dialog.findViewById(R.id.show_select_sdcard_dlg_msg);
 		String msg="";
@@ -4269,8 +4317,8 @@ public class ActivityMain extends AppCompatActivity {
 	    
 		final LinearLayout title_view = (LinearLayout) dialog.findViewById(R.id.about_dialog_title_view);
 		final TextView title = (TextView) dialog.findViewById(R.id.about_dialog_title);
-		title_view.setBackgroundColor(mGp.themeColorList.dialog_title_background_color);
-		title.setTextColor(mGp.themeColorList.text_color_dialog_title);
+		title_view.setBackgroundColor(mGp.themeColorList.title_background_color);
+		title.setTextColor(mGp.themeColorList.title_text_color);
 		title.setText(getString(R.string.msgs_dlg_title_about)+"(Ver "+getAppVersionName()+")");
 		
         // get our tabHost from the xml
@@ -4397,11 +4445,11 @@ public class ActivityMain extends AppCompatActivity {
 		dlg_view.setBackgroundResource(R.drawable.dialog_border_dark);
 		
 		final LinearLayout title_view = (LinearLayout) dialog.findViewById(R.id.config_backup_restore_dlg_title_view);
-		title_view.setBackgroundColor(mGp.themeColorList.dialog_title_background_color);
+		title_view.setBackgroundColor(mGp.themeColorList.title_background_color);
 		final TextView dlg_title = (TextView) dialog.findViewById(R.id.config_backup_restore_dlg_title);
-		dlg_title.setTextColor(mGp.themeColorList.text_color_dialog_title);
+		dlg_title.setTextColor(mGp.themeColorList.title_text_color);
 		final TextView dlg_backup_date = (TextView) dialog.findViewById(R.id.config_backup_restore_dlg_backup_date);
-		dlg_backup_date.setTextColor(mGp.themeColorList.text_color_dialog_title);
+//		dlg_backup_date.setTextColor(mGp.themeColorList.text_color_dialog_title);
 		final Button btnClose = (Button) dialog.findViewById(R.id.config_backup_restore_dlg_btn_close);
 		final Button btnBackup = (Button) dialog.findViewById(R.id.config_backup_restore_dlg_btn_backup);
 		final Button btnRestore = (Button) dialog.findViewById(R.id.config_backup_restore_dlg_btn_restore);
