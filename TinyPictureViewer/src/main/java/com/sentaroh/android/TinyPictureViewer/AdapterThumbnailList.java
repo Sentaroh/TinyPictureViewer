@@ -199,30 +199,35 @@ public class AdapterThumbnailList extends BaseAdapter {
 	    byte[] thumb_array=getItem(position).getThumbnailImageByte();
 	    if (getItem(position).getThumbnailImageByte()!=null) {
 	    	thumb_array=getItem(position).getThumbnailImageByte();
-	    	
 			Bitmap bm=BitmapFactory.decodeByteArray(thumb_array, 0, thumb_array.length);
-			int b_w=bm.getWidth();
-			int b_h=bm.getHeight();
-			
-		    Matrix matrix=new Matrix();
+			if (bm!=null) {
+                int b_w=bm.getWidth();
+                int b_h=bm.getHeight();
 
-		    float scale_w=(float)mViewWidth/(float)b_w;
-		    float scale_h=(float)mViewHeight/(float)b_h;
-		    float scale=Math.min(scale_w, scale_h);
-		    matrix.postScale(scale, scale);
-		    
-		    int s_w=Math.round((float)b_w*scale);
-		    if (s_w<mViewWidth) {
-		    	int translate_val=Math.abs(mViewWidth-s_w);
-		    	if (translate_val>1) {
+                Matrix matrix=new Matrix();
+
+                float scale_w=(float)mViewWidth/(float)b_w;
+                float scale_h=(float)mViewHeight/(float)b_h;
+                float scale=Math.min(scale_w, scale_h);
+                matrix.postScale(scale, scale);
+
+                int s_w=Math.round((float)b_w*scale);
+                if (s_w<mViewWidth) {
+                    int translate_val=Math.abs(mViewWidth-s_w);
+                    if (translate_val>1) {
 //		    		Log.v("","name="+getItem(position).getFileName()+", translate="+(float)(translate_val/2));
-		    		matrix.postTranslate((float)(translate_val/2), 0.0f);		
-		    	}
-		    }
-		    holder.image_view.setScaleType(ScaleType.MATRIX);
-		    holder.image_view.setImageMatrix(matrix);
-		    holder.image_view.setImageBitmap(bm);
-		    holder.image_view.setBackgroundColor(Color.BLACK);
+                        matrix.postTranslate((float)(translate_val/2), 0.0f);
+                    }
+                }
+                holder.image_view.setScaleType(ScaleType.MATRIX);
+                holder.image_view.setImageMatrix(matrix);
+                holder.image_view.setImageBitmap(bm);
+                holder.image_view.setBackgroundColor(Color.BLACK);
+            } else {
+                holder.image_view.setScaleType(ScaleType.FIT_CENTER);
+                holder.image_view.setImageBitmap(null);
+                holder.image_view.setBackgroundColor(Color.DKGRAY);
+            }
 	    } else {
 	    	holder.image_view.setScaleType(ScaleType.FIT_CENTER);
 		    holder.image_view.setImageBitmap(null);
