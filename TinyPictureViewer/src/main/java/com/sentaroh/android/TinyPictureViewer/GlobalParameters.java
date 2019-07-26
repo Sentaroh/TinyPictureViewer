@@ -355,7 +355,7 @@ public class GlobalParameters extends CommonGlobalParms {
 		setLogLimitSize(2*1024*1024);
 		setLogMaxFileCount(gp.settingLogMaxFileCount);
 		setLogEnabled(gp.settingLogOption);
-		setLogDirName(appSpecificDirectory+"/log/");//gp.settingLogMsgDir);
+        setLogDirName(gp.appContext.getExternalFilesDir(null)+"/log/");
 		setLogFileName(gp.settingLogMsgFilename);
 		setApplicationTag(APPLICATION_TAG);
 	}
