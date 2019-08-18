@@ -752,13 +752,15 @@ public class PictureUtil {
 		    Bitmap bitmap = BitmapFactory.decodeByteArray(bm_file,0,bm_file.length, imageOptions2);
 		    
 		    Bitmap bmp=rotateBitmapByPictureOrientation(bitmap, orientation);
-			ByteArrayOutputStream bos=new ByteArrayOutputStream();
-			bmp.compress(CompressFormat.JPEG, image_quality, bos);
-			bos.flush();
-			bos.close();
-			bitmap.recycle();
-			bmp.recycle();
-			bm_result=bos.toByteArray();
+		    if (bmp!=null) {
+                ByteArrayOutputStream bos=new ByteArrayOutputStream();
+                bmp.compress(CompressFormat.JPEG, image_quality, bos);
+                bos.flush();
+                bos.close();
+                bitmap.recycle();
+                bmp.recycle();
+                bm_result=bos.toByteArray();
+            }
 			if (debug)
                 gp.cUtil.addDebugMsg(1,"I","Image file="+fp+
 						", Original Image Size: " + imageOptions.outWidth +
