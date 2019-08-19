@@ -22,12 +22,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Paint;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.content.FileProvider;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
@@ -760,8 +761,26 @@ public class PictureUtil {
                 bitmap.recycle();
                 bmp.recycle();
                 bm_result=bos.toByteArray();
+            } else {
+                if (debug && gp!=null && gp.cUtil!=null)
+                    gp.cUtil.addDebugMsg(1,"I","BitmapFactory.decodeByteArray failed, fp="+fp);
+                bmp = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888);
+                Canvas cv = new Canvas(bmp);
+                Paint p = new Paint();
+                p.setTextSize(30);
+                p.setColor(0xffffffff);
+                p.setAntiAlias(true);
+                cv.drawText("Unknown file",60f, 100f, p);
+                cv.drawText("format",90f, 130f, p);
+
+                ByteArrayOutputStream bos=new ByteArrayOutputStream();
+                bmp.compress(CompressFormat.JPEG, image_quality, bos);
+                bos.flush();
+                bos.close();
+                bmp.recycle();
+                bm_result=bos.toByteArray();
             }
-			if (debug)
+			if (debug && gp!=null && gp.cUtil!=null)
                 gp.cUtil.addDebugMsg(1,"I","Image file="+fp+
 						", Original Image Size: " + imageOptions.outWidth +
 						" x " + imageOptions.outHeight+
@@ -771,6 +790,8 @@ public class PictureUtil {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
 		}
 		return bm_result;
 	};
