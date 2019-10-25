@@ -32,8 +32,13 @@ import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @SuppressLint("DefaultLocale")
 public class PictureUtil {
+    private static Logger log= LoggerFactory.getLogger(PictureUtil.class);
+
 	final static public String createBitmapCacheFilePath(GlobalParameters gp, String pic_file_path) {
 		String cache_name=(pic_file_path).replace("/", "_")+".bmc";
 		return gp.internalRootDirectory+gp.appSpecificDirectory+"/bitmap_cache/"+cache_name;
@@ -224,9 +229,8 @@ public class PictureUtil {
 			ois.close();
 			bis.close();
 			addPictureFileCacheItemToCache(gp, pfbmci) ;
-        	if (gp.settingDebugLevel>1)
-                gp.cUtil.addDebugMsg(1,"I","Bitmap cache file loaded"+
-        			", elapsed time="+(System.currentTimeMillis()-b_time)+", fp="+pic_file_path);
+            log.debug("Bitmap cache file loaded"+
+                ", elapsed time="+(System.currentTimeMillis()-b_time)+", fp="+pic_file_path);
 		} catch (FileNotFoundException e) {
 //			e.printStackTrace();
 		} catch (IOException e) {
@@ -249,11 +253,10 @@ public class PictureUtil {
 			oos.flush();
 			oos.close();
 			addPictureFileCacheItemToCache(gp, pfbmci);
-        	if (gp.settingDebugLevel>1)
-                gp.cUtil.addDebugMsg(1,"I","savePictureFileCacheFile cache file saved"+
-        			", elapsed time="+(System.currentTimeMillis()-b_time)+", fp="+bmcf.getAbsolutePath());
+            log.debug("savePictureFileCacheFile cache file saved"+
+                ", elapsed time="+(System.currentTimeMillis()-b_time)+", fp="+bmcf.getAbsolutePath());
 		} catch (IOException e) {
-            gp.cUtil.addDebugMsg(1,"I","savePictureFileCacheFile cache file save error, error="+e.getMessage()+", fp="+pfbmci.file_path);
+            log.debug("savePictureFileCacheFile cache file save error, error="+e.getMessage()+", fp="+pfbmci.file_path);
 		}
 	};
 
@@ -367,30 +370,27 @@ public class PictureUtil {
                 } else output_bitmap=input_bitmap;
                 Bitmap rot_bm=rotateBitmapByPictureOrientation(output_bitmap, orientation);
 
-                if (gp.settingDebugLevel>1)
-                    gp.cUtil.addDebugMsg(1,"I","createPictureFileBitmap Picture bit map created"+
-                            ", Display height="+disp_metrics.heightPixels+", width="+disp_metrics.widthPixels+
-                            ", Density="+disp_metrics.density+
-                            ", Original Bitmap height="+org_opt.outHeight+", width="+org_opt.outWidth+
-                            ", Size="+input_bitmap.getByteCount()+
-                            ", Scale="+scale+
-                            ", Resized Bitmap height="+rot_bm.getHeight()+", width="+rot_bm.getWidth()+", size="+rot_bm.getByteCount()+
-                            ", Decode time="+decoded_time+
-                            ", Elapsed time="+(System.currentTimeMillis()-b_time)+
-                            ", fp="+fp);
+                log.debug("createPictureFileBitmap Picture bit map created"+
+                        ", Display height="+disp_metrics.heightPixels+", width="+disp_metrics.widthPixels+
+                        ", Density="+disp_metrics.density+
+                        ", Original Bitmap height="+org_opt.outHeight+", width="+org_opt.outWidth+
+                        ", Size="+input_bitmap.getByteCount()+
+                        ", Scale="+scale+
+                        ", Resized Bitmap height="+rot_bm.getHeight()+", width="+rot_bm.getWidth()+", size="+rot_bm.getByteCount()+
+                        ", Decode time="+decoded_time+
+                        ", Elapsed time="+(System.currentTimeMillis()-b_time)+
+                        ", fp="+fp);
                 return rot_bm;
             } else {
-                if (gp.settingDebugLevel>1)
-                    gp.cUtil.addDebugMsg(1,"I","createPictureFileBitmap Picture dummy bit map created"+
-                            ", Elapsed time="+(System.currentTimeMillis()-b_time)+
-                            ", fp="+fp);
+                log.debug("createPictureFileBitmap Picture dummy bit map created"+
+                        ", Elapsed time="+(System.currentTimeMillis()-b_time)+
+                        ", fp="+fp);
                 return null;
             }
         } else {
-            if (gp.settingDebugLevel>1)
-                gp.cUtil.addDebugMsg(1,"I","createPictureFileBitmap null bm_array"+
-                        ", Elapsed time="+(System.currentTimeMillis()-b_time)+
-                        ", fp="+fp);
+            log.debug("createPictureFileBitmap null bm_array"+
+                    ", Elapsed time="+(System.currentTimeMillis()-b_time)+
+                    ", fp="+fp);
     	    return null;
         }
     };
@@ -762,8 +762,7 @@ public class PictureUtil {
                 bmp.recycle();
                 bm_result=bos.toByteArray();
             } else {
-                if (debug && gp!=null && gp.cUtil!=null)
-                    gp.cUtil.addDebugMsg(1,"I","BitmapFactory.decodeByteArray failed, fp="+fp);
+                log.debug("BitmapFactory.decodeByteArray failed, fp="+fp);
                 bmp = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888);
                 Canvas cv = new Canvas(bmp);
                 Paint p = new Paint();
@@ -780,8 +779,7 @@ public class PictureUtil {
                 bmp.recycle();
                 bm_result=bos.toByteArray();
             }
-			if (debug && gp!=null && gp.cUtil!=null)
-                gp.cUtil.addDebugMsg(1,"I","Image file="+fp+
+            log.debug("Image file="+fp+
 						", Original Image Size: " + imageOptions.outWidth +
 						" x " + imageOptions.outHeight+
 						", Scale factor="+imageOptions2.inSampleSize+", bitmap array size="+bm_result.length);
@@ -806,11 +804,10 @@ public class PictureUtil {
 			fis.read(bm_file);
 			fis.close();
 			bm_result=bm_file;
-			if (gp.settingDebugLevel>=1)
-                gp.cUtil.addDebugMsg(1,"I","createImageByteArray result="+bm_result+", fp="+fp);
+            log.debug("createImageByteArray result="+bm_result+", fp="+fp);
 //			Log.v("","elapsed="+(System.currentTimeMillis()-b_time)+", name="+fp);
 		} catch (IOException e) {
-		    gp.cUtil.addDebugMsg(1,"I","createImageByteArray error="+e.getMessage()+", fp="+fp);
+            log.debug("createImageByteArray error="+e.getMessage()+", fp="+fp);
 //			e.printStackTrace();
 		}
 		return bm_result;

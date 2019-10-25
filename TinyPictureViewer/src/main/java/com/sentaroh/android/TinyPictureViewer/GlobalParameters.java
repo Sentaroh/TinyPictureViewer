@@ -27,6 +27,7 @@ import static com.sentaroh.android.TinyPictureViewer.Constants.*;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.sentaroh.android.TinyPictureViewer.Log.LogUtil;
 import com.sentaroh.android.TinyPictureViewer.PictureUtil.PictureFileCacheItem;
 import com.sentaroh.android.Utilities.CommonGlobalParms;
 import com.sentaroh.android.Utilities.SafManager;
@@ -57,7 +58,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.LoggerWriter;
+
 public class GlobalParameters extends CommonGlobalParms {
+    private static Logger log= LoggerFactory.getLogger(GlobalParameters.class);
+
 	public boolean debugEnabled=true;
 	public boolean activityIsDestroyed=false;
 	public boolean activityIsBackground=false;
@@ -217,7 +224,7 @@ public class GlobalParameters extends CommonGlobalParms {
 	
 	public boolean settingScanHiddenFile=false;
 	public ArrayList<ScanFolderItem> settingScanDirectoryList=null;
-	public String[] settingScanFileType=new String[]{"jpg","png"};
+	public String[] settingScanFileType=new String[]{"jpg","jpeg","png"};
 	
 	public int folderListSortKey=0;
 	public int folderListSortOrder=0;
@@ -281,6 +288,10 @@ public class GlobalParameters extends CommonGlobalParms {
         createCacheDiretory();
 
         initStorageStatus(c);
+
+        LogUtil lu=new LogUtil(c, "Slf4j", this);
+        Slf4jLogWriter lw=new Slf4jLogWriter(lu);
+        log.setWriter(lw);
 
         initSettingsParms(c);
         loadSettingsParms(c);
@@ -451,7 +462,12 @@ public class GlobalParameters extends CommonGlobalParms {
 				prefs.getBoolean(c.getString(R.string.settings_picture_display_option_restore_when_startup), false);
 //		Log.v("","gp init pi="+settingPictureDisplayOptionShowPictureInfo);
 
-		loadScanFolderList(c);
+        if (settingDebugLevel==0) log.setLogOption(false, true, true, false, false);
+        else if (settingDebugLevel==1) log.setLogOption(true, true, true, false, true);
+        else if (settingDebugLevel==2) log.setLogOption(true, true, true, true, true);
+        else log.setLogOption(false, true, true, false, false);
+
+        loadScanFolderList(c);
 	};
 
 	final static private String FOLDER_LIST_SORT_KEY="settings_folder_list_sort_key";
@@ -578,7 +594,7 @@ public class GlobalParameters extends CommonGlobalParms {
 			}
 			settingScanDirectoryList=scan_list;
 		}
-	};
+	}
 	
 	private boolean isDebuggable() {
 		boolean result=false;
@@ -593,6 +609,17 @@ public class GlobalParameters extends CommonGlobalParms {
         	result=true;
 //        Log.v("","debuggable="+result);
         return result;
-    };
-	
+    }
+
+    private class Slf4jLogWriter extends LoggerWriter {
+        private LogUtil mLu =null;
+        public Slf4jLogWriter(LogUtil lu) {
+            mLu =lu;
+        }
+        @Override
+        public void write(String msg) {
+            mLu.addDebugMsg(1,"I", msg);
+        }
+    }
+
 }

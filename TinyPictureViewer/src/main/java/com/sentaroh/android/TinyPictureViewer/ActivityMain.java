@@ -99,9 +99,13 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ActivityMain extends AppCompatActivity {
 	private GlobalParameters mGp=null;
-	
+    private static Logger log= LoggerFactory.getLogger(ActivityMain.class);
+
 	private boolean mTerminateApplication=false;
 	private int mRestartStatus=0;
 
