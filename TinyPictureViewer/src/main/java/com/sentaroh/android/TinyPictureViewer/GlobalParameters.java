@@ -155,6 +155,9 @@ public class GlobalParameters extends CommonGlobalParms {
 	public ImageButton pictureWallpaperBtn=null;
 	public ImageButton pictureDeleteBtn=null;
 
+    public Button pictureLeftBtn=null;
+    public Button pictureRightBtn=null;
+
 	public ImageButton contextButtonFolderExclude=null, 
 			contextButtonFolderMediaFileScan=null,
 			contextButtonFolderRename=null, contextButtonFolderAdd=null, 

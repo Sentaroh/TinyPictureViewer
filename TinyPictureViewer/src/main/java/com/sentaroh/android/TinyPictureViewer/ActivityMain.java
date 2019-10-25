@@ -1614,6 +1614,8 @@ public class ActivityMain extends AppCompatActivity {
 //		setUiHideSystemView();
 		mGp.pictureViewBottomControl.setVisibility(LinearLayout.INVISIBLE);//GONE);
 		mGp.pictureViewTopControl.setVisibility(TextView.INVISIBLE);//GONE);
+        mGp.pictureLeftBtn.setVisibility(Button.VISIBLE);
+        mGp.pictureRightBtn.setVisibility(Button.VISIBLE);
 		if (!mGp.showSinglePicture) mGp.saveSettingPictureDisplayUiMode(mContext);
 
 	};
@@ -1634,6 +1636,8 @@ public class ActivityMain extends AppCompatActivity {
 		setUiShowSystemView();
 		mGp.pictureViewBottomControl.setVisibility(LinearLayout.VISIBLE);
 		mGp.pictureViewTopControl.setVisibility(TextView.VISIBLE);
+        mGp.pictureLeftBtn.setVisibility(Button.GONE);
+        mGp.pictureRightBtn.setVisibility(Button.GONE);
 		if (!mGp.showSinglePicture) mGp.saveSettingPictureDisplayUiMode(mContext);
 	};
 

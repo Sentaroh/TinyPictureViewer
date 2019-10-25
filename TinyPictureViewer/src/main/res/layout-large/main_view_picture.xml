@@ -189,6 +189,38 @@
 	    
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/main_view_picture_image_right_control"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/main_view_picture_right_button"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/main_view_picture_image_left_control"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/main_view_picture_left_button"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"/>
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/main_view_picture_image_top_control"

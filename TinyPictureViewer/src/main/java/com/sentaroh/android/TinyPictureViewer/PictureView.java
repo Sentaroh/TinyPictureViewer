@@ -24,6 +24,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager.LayoutParams;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -106,6 +107,9 @@ public class PictureView {
 		mGp.pictureShareBtn=(ImageButton)ll_picture.findViewById(R.id.main_view_picture_share);
 		mGp.pictureWallpaperBtn=(ImageButton)ll_picture.findViewById(R.id.main_view_picture_image_wallpaper);
 		mGp.pictureDeleteBtn=(ImageButton)ll_picture.findViewById(R.id.main_view_picture_delete);
+
+        mGp.pictureLeftBtn=(Button)ll_picture.findViewById(R.id.main_view_picture_left_button);
+        mGp.pictureRightBtn=(Button)ll_picture.findViewById(R.id.main_view_picture_right_button);
 		
 		mGp.customViewPagerView=(LinearLayout)ll_picture.findViewById(R.id.main_view_picture_image_pager_view);
 		
@@ -709,6 +713,24 @@ public class PictureView {
 				}
 			}
 		});
+
+        mGp.pictureLeftBtn.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (!mActivity.isUiEnabled()) return;
+                mUtil.addDebugMsg(1, "I", "Left button clicked");
+                mGp.picturePrevBtn.performClick();
+            }
+        });
+
+        mGp.pictureRightBtn.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (!mActivity.isUiEnabled()) return;
+                mUtil.addDebugMsg(1, "I", "Right button clicked");
+                mGp.pictureNextBtn.performClick();
+            }
+        });
 
         mGp.pictureDeleteBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
