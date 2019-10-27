@@ -1352,7 +1352,7 @@ public class ActivityMain extends AppCompatActivity {
 		
 		mGp.adapterFolderView=new AdapterFolderList(mActivity, mGp.masterFolderList);
 		mGp.folderGridView.setAdapter(mGp.adapterFolderView);
-//		mGp.mFolderGridView.setFastScrollEnabled(true);
+        mGp.folderGridView.setFastScrollEnabled(true);
 		mGp.adapterFolderView.setSortKey(mGp.folderListSortKey);
 		mGp.adapterFolderView.setSortOrder(mGp.folderListSortOrder);
 
@@ -1362,7 +1362,7 @@ public class ActivityMain extends AppCompatActivity {
 		
 		mGp.adapterThumbnailView=new AdapterThumbnailList(mActivity, null);
 		mGp.thumbnailGridView.setAdapter(mGp.adapterThumbnailView);
-//		mThumbnailGridView.setFastScrollEnabled(true);
+        mGp.thumbnailGridView.setFastScrollEnabled(true);
 
 		mGp.adapterPictureSelectorSpinner=new CustomActionBarSpinnerAdapter(this);
 		mGp.adapterPictureSelectorSpinner.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);//simple_spinner_dropdown_item);

@@ -378,20 +378,7 @@ public class PictureView {
 		mGp.picturePrevBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				if (!mActivity.isUiEnabled()) return;
-				if (mGp.customViewPager.getAdapter()==null) return;
-				if (mGp.customViewPager.getCurrentItem()>0) {
-					mGp.picturePrevBtn.setEnabled(false);
-                    mGp.customViewPager.setUseFastScroll(true);
-					mGp.customViewPager.setCurrentItem(mGp.customViewPager.getCurrentItem()-1, true);
-                    mUiHandler.postDelayed(new Runnable(){
-                        @Override
-                        public void run() {
-                            mGp.customViewPager.setUseFastScroll(false);
-                        }
-                    },100);
-				}
-//				setPrevNextButtonEnabled(mGp.mCustomViewPager);
+                showPrevPicture();
 			}
 		});
 
@@ -407,20 +394,7 @@ public class PictureView {
 		mGp.pictureNextBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				if (!mActivity.isUiEnabled()) return;
-				if (mGp.customViewPager.getAdapter()==null) return;
-				if (mGp.customViewPager.getCurrentItem()<mGp.customViewPager.getAdapter().getCount()) {
-					mGp.pictureNextBtn.setEnabled(false);
-                    mGp.customViewPager.setUseFastScroll(true);
-					mGp.customViewPager.setCurrentItem(mGp.customViewPager.getCurrentItem()+1, true);
-					mUiHandler.postDelayed(new Runnable(){
-                        @Override
-                        public void run() {
-                            mGp.customViewPager.setUseFastScroll(false);
-                        }
-                    },100);
-				}
-//				setPrevNextButtonEnabled(mGp.mCustomViewPager);
+                showNextPicture();
 			}
 		});
 
@@ -719,7 +693,7 @@ public class PictureView {
             public void onClick(View v) {
                 if (!mActivity.isUiEnabled()) return;
                 mUtil.addDebugMsg(1, "I", "Left button clicked");
-                mGp.picturePrevBtn.performClick();
+                showPrevPicture();
             }
         });
 
@@ -728,7 +702,7 @@ public class PictureView {
             public void onClick(View v) {
                 if (!mActivity.isUiEnabled()) return;
                 mUtil.addDebugMsg(1, "I", "Right button clicked");
-                mGp.pictureNextBtn.performClick();
+                showNextPicture();
             }
         });
 
@@ -856,7 +830,42 @@ public class PictureView {
 		});
 	};
 
-	private void rotatePicture(final boolean rotate_clockwise) {
+	private void showPrevPicture() {
+        if (!mActivity.isUiEnabled()) return;
+        if (mGp.customViewPager.getAdapter()==null) return;
+        if (mGp.customViewPager.getCurrentItem()>0) {
+            mGp.picturePrevBtn.setEnabled(false);
+            mGp.customViewPager.setUseFastScroll(true);
+            mGp.customViewPager.setCurrentItem(mGp.customViewPager.getCurrentItem()-1, true);
+            mUiHandler.postDelayed(new Runnable(){
+                @Override
+                public void run() {
+                    mGp.customViewPager.setUseFastScroll(false);
+                }
+            },100);
+        }
+//		setPrevNextButtonEnabled(mGp.mCustomViewPager);
+
+    }
+
+    private void showNextPicture() {
+        if (!mActivity.isUiEnabled()) return;
+        if (mGp.customViewPager.getAdapter()==null) return;
+        if (mGp.customViewPager.getCurrentItem()<mGp.customViewPager.getAdapter().getCount()) {
+            mGp.pictureNextBtn.setEnabled(false);
+            mGp.customViewPager.setUseFastScroll(true);
+            mGp.customViewPager.setCurrentItem(mGp.customViewPager.getCurrentItem()+1, true);
+            mUiHandler.postDelayed(new Runnable(){
+                @Override
+                public void run() {
+                    mGp.customViewPager.setUseFastScroll(false);
+                }
+            },100);
+        }
+//		setPrevNextButtonEnabled(mGp.mCustomViewPager);
+    }
+
+    private void rotatePicture(final boolean rotate_clockwise) {
 		final int pos=mGp.customViewPager.getCurrentItem();
 		final PictureWorkItem pw=mGp.adapterPictureView.getPictureWorkList().get(pos);
 		final CustomImageView civ=pw.image_view;

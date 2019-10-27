@@ -23,7 +23,7 @@
         android:layout_marginLeft="1dp"
         android:layout_weight="1"
         android:fastScrollEnabled="false"
-        android:columnWidth="170dp"
+        android:columnWidth="160dp"
         android:horizontalSpacing="8dp"
         android:listSelector="@drawable/grid_view_selector"
         android:numColumns="auto_fit"
