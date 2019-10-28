@@ -3573,7 +3573,7 @@ public class ActivityMain extends AppCompatActivity {
 		File[]fl=new File(fli.getParentDirectory()).listFiles();
 		if (fl!=null && fl.length>0) {
 			ArrayList<File>file_list=new ArrayList<File>();
-			for(File item:fl) file_list.add(item);
+			for(File item:fl) if (item.isFile()) file_list.add(item);
 			if (file_list.size()>0) {
 				ThreadCtrl tc=new ThreadCtrl();
 				if (updateSpecificPictureList(tc, fli, pic_list, file_list)) {
