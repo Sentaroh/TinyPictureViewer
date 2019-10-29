@@ -31,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -100,6 +101,15 @@ public final class CommonUtilities {
 	    }
 	};
 
+	public static String getStackTraceElement(Exception e) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        pw.flush();
+        pw.close();
+        return sw.toString();
+    }
+
 	public static String sharePictures(Context c, String[] send_pic_fp) {
 		if (send_pic_fp.length>1) {
 			Intent intent = new Intent();
@@ -118,9 +128,11 @@ public final class CommonUtilities {
 			}
 			intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
             try {
+//                String npe=null;
+//                npe.length();
                 c.startActivity(intent);
             } catch(Exception e) {
-                return "startActivity() failed at shareItem() for multiple item. message="+e.getMessage();
+                return "startActivity() failed at shareItem() for multiple item. message="+e.getMessage()+"\n"+getStackTraceElement(e);
             }
 		} else {
 			Intent intent = new Intent(android.content.Intent.ACTION_SEND);
@@ -133,9 +145,11 @@ public final class CommonUtilities {
             intent.putExtra(Intent.EXTRA_STREAM, uri);
 			intent.setType("image/*");
             try {
+//                String npe=null;
+//                npe.length();
                 c.startActivity(intent);
             } catch(Exception e) {
-                return "startActivity() failed at shareItem() for multiple item. message="+e.getMessage();
+                return "startActivity() failed at shareItem() for multiple item. message="+e.getMessage()+"\n"+getStackTraceElement(e);
             }
 		}
 		return null;
