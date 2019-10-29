@@ -25,10 +25,15 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @SuppressLint("InflateParams")
 public class AdapterPictureList extends PagerAdapter {
 	private GlobalParameters mGp=null;
-	
+
+	private static final Logger log= LoggerFactory.getLogger(AdapterPictureList.class);
+
     private Context mContext;
     private ActivityMain mActivity;
 

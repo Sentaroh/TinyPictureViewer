@@ -428,7 +428,17 @@ public class GlobalParameters extends CommonGlobalParms {
 	public void saveSettingOptionLogEnabled(Context c, boolean enabled) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
 		prefs.edit().putBoolean(c.getString(R.string.settings_log_option), enabled).commit();
+		if (this.settingDebugLevel==0) {
+            this.settingDebugLevel=1;
+            prefs.edit().putString(c.getString(R.string.settings_log_level), "1").commit();
+        }
 		this.settingLogOption=enabled;
+
+        if (settingDebugLevel==0) log.setLogOption(false, true, true, false, false);
+        else if (settingDebugLevel==1) log.setLogOption(true, true, true, false, true);
+        else if (settingDebugLevel==2) log.setLogOption(true, true, true, true, true);
+        else log.setLogOption(false, true, true, false, false);
+
         setLogParms(this);
 	};
 
