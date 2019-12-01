@@ -113,8 +113,9 @@ public final class CommonUtilities {
 	public static String sharePictures(Context c, String[] send_pic_fp) {
 		if (send_pic_fp.length>1) {
 			Intent intent = new Intent();
-			intent.setAction(Intent.ACTION_SEND_MULTIPLE);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+			intent.setAction(Intent.ACTION_SEND_MULTIPLE);
 			intent.setType("image/*"); /* This example is sharing jpeg images. */
 
 			ArrayList<Uri> files = new ArrayList<Uri>();
@@ -122,7 +123,7 @@ public final class CommonUtilities {
 			for(String path : send_pic_fp) {
 			    File file = new File(path);
                 Uri uri =null;
-                if (Build.VERSION.SDK_INT>=26)  uri= FileProvider.getUriForFile(c, BuildConfig.APPLICATION_ID + ".provider", file);
+                if (Build.VERSION.SDK_INT>=23)  uri= FileProvider.getUriForFile(c, BuildConfig.APPLICATION_ID + ".provider", file);
                 else Uri.fromFile(file);
                 files.add(uri);
 			}
@@ -137,10 +138,10 @@ public final class CommonUtilities {
 		} else {
 			Intent intent = new Intent(android.content.Intent.ACTION_SEND);
 			File lf=new File(send_pic_fp[0]);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
             Uri uri=null;
-            if (Build.VERSION.SDK_INT>=26)  uri= FileProvider.getUriForFile(c, BuildConfig.APPLICATION_ID + ".provider", lf);
+            if (Build.VERSION.SDK_INT>=23)  uri= FileProvider.getUriForFile(c, BuildConfig.APPLICATION_ID + ".provider", lf);
             else Uri.fromFile(lf);
             intent.putExtra(Intent.EXTRA_STREAM, uri);
 			intent.setType("image/*");

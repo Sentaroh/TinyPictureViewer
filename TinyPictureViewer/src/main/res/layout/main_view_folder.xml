@@ -20,7 +20,7 @@
         android:listSelector="@drawable/grid_view_selector"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="8dp" 
+        android:verticalSpacing="8dp"
         android:scrollbarStyle="outsideInset">
 
     </GridView>

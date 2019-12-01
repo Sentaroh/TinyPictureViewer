@@ -44,10 +44,12 @@ public class AdapterFolderList extends BaseAdapter {
 	  }
 
 	  private Drawable mDummyThumbnail=null;
-	  public AdapterFolderList(ActivityMain a, ArrayList<FolderListItem> fl) {
+    private boolean mShowSimpleFolderView=false;
+	  public AdapterFolderList(ActivityMain a, ArrayList<FolderListItem> fl, boolean show_simple_folder_view) {
 		  mActivity = a;
 		  mLayoutInflater = LayoutInflater.from(a);
 		  mFolderList=fl;
+          mShowSimpleFolderView=show_simple_folder_view;
 		  mDummyThumbnail=a.getResources().getDrawable(R.drawable.ic_128_tiny_picture_viewer, null);
 		  Resources res = a.getResources();  
 		  mViewHeight=(int) res.getDimension(R.dimen.folder_list_image_height);
@@ -195,7 +197,8 @@ public class AdapterFolderList extends BaseAdapter {
 
 		  ViewHolder holder;
 		  if (convertView == null) {
-		      convertView = mLayoutInflater.inflate(R.layout.cell_folder_detail_view, null);
+              if (mShowSimpleFolderView) convertView = mLayoutInflater.inflate(R.layout.cell_folder_simple_view, null);
+              else convertView = mLayoutInflater.inflate(R.layout.cell_folder_detail_view, null);
 		      holder = new ViewHolder();
 		      holder.folder_desc_view=(LinearLayout)convertView.findViewById(R.id.cell_folder_view);
 		      holder.image_view = (ImageView)convertView.findViewById(R.id.cell_folder_view_image);
@@ -220,31 +223,11 @@ public class AdapterFolderList extends BaseAdapter {
 			  if (fli.getThumbnailArray()!=null) {
 				  Bitmap bm=BitmapFactory.decodeByteArray(fli.getThumbnailArray(), 0, fli.getThumbnailArray().length);
 				  if (bm!=null) {
-                      int b_w=bm.getWidth();
-                      int b_h=bm.getHeight();
-
-                      Matrix matrix=new Matrix();
-
-                      float scale_w=(float)mViewWidth/(float)b_w;
-                      float scale_h=(float)mViewHeight/(float)b_h;
-                      float scale=Math.min(scale_w, scale_h);
-
-                      matrix.postScale(scale, scale);
-
-                      int s_w=Math.round((float)b_w*scale);
-                      if (s_w<mViewWidth) {
-                          int translate_val=Math.abs(mViewWidth-s_w);
-                          if (translate_val>1) {
-                              matrix.postTranslate((float)(translate_val/2), 0.0f);
-                          }
-                      }
-                      holder.image_view.setScaleType(ScaleType.MATRIX);
-                      holder.image_view.setImageMatrix(matrix);
-
+                      holder.image_view.setScaleType(ScaleType.CENTER_CROP);
                       holder.image_view.setImageBitmap(bm);
                       holder.image_view.setBackgroundColor(Color.BLACK);
                   } else {
-                      holder.image_view.setScaleType(ScaleType.FIT_CENTER);
+                      holder.image_view.setScaleType(ScaleType.CENTER_CROP);
                       holder.image_view.setImageDrawable(mDummyThumbnail);
                       if (!mCacheCreateWarningIssued) {
                           mCacheCreateWarningIssued=true;

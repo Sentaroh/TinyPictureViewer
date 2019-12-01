@@ -17,7 +17,9 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
-            android:scaleType="fitCenter"
+            android:adjustViewBounds="false"
+            android:cropToPadding="false"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_128_tiny_picture_viewer" />
 
         <CheckBox
@@ -26,55 +28,56 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
+            android:layout_marginLeft="-5dp"
+            android:layout_marginTop="22dp"
             android:checked="true"
             android:focusable="false"
             android:focusableInTouchMode="false" />
 
-        <LinearLayout
-            android:id="@+id/cell_folder_view_"
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/cell_folder_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+        <TextView
+            android:id="@+id/cell_folder_view_folder_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/cell_folder_view_image"
-            android:layout_alignParentLeft="true"
-            android:orientation="vertical" >
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:lines="1"
+            android:text="file name.jpg"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-            <TextView
-                android:id="@+id/cell_folder_view_folder_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:gravity="center_horizontal"
-                android:lines="1"
-                android:text="file name.jpg"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+        <TextView
+            android:id="@+id/cell_folder_view_no_of_pictures"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10 Files"
+            android:visibility="gone"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <TextView
-                android:id="@+id/cell_folder_view_no_of_pictures"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="10 Files"
-                android:visibility="gone"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-            
-            <TextView
-                android:id="@+id/cell_folder_view_latest_picture_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="0000/00/00 00:00:00"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-            
-            <TextView
-                android:id="@+id/cell_folder_view_directory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="start"
-                android:maxLines="4"
-                android:visibility="gone"
-                android:text="/sdcard/Pictures"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/cell_folder_view_latest_picture_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="0000/00/00 00:00:00"
+            android:visibility="gone"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/cell_folder_view_directory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="start"
+            android:maxLines="4"
+            android:visibility="gone"
+            android:text="/sdcard/Pictures"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    </LinearLayout>
 
 </LinearLayout>

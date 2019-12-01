@@ -526,9 +526,11 @@ public class ActivityMain extends AppCompatActivity {
 		if (mGp.safMgr.getSdcardRootPath().equals(SafManager.UNKNOWN_SDCARD_DIRECTORY)) menu.findItem(R.id.menu_top_show_sdcard_selector).setVisible(true);
 		else menu.findItem(R.id.menu_top_show_sdcard_selector).setVisible(false);
 
-		if (mGp.currentView==CURRENT_VIEW_FOLDER) {
+        menu.findItem(R.id.menu_top_switch_folder_view).setVisible(false);
+        if (mGp.currentView==CURRENT_VIEW_FOLDER) {
 			menu.findItem(R.id.menu_top_sort_thumbnail).setVisible(false);
 			menu.findItem(R.id.menu_top_edit_scan_folder).setVisible(true);
+            menu.findItem(R.id.menu_top_switch_folder_view).setVisible(true);
 			if (isUiEnabled()) {
 				if (mTcBuildFolderList!=null && mTcBuildFolderList.isEnabled()) {
 					menu.findItem(R.id.menu_top_edit_scan_folder).setVisible(false);
@@ -549,7 +551,10 @@ public class ActivityMain extends AppCompatActivity {
 				menu.findItem(R.id.menu_top_refresh_file_list).setVisible(false);
 				menu.findItem(R.id.menu_top_start_camera).setVisible(false);
 			}
-    	   
+
+            if (mGp.settingShowSimpleFolderView) menu.findItem(R.id.menu_top_switch_folder_view).setTitle(R.string.msgs_menu_show_folder_view_show_standard_view);
+            else menu.findItem(R.id.menu_top_switch_folder_view).setTitle(R.string.msgs_menu_show_folder_view_show_simple_view);
+
 			mGp.spinnerPictureSelector.setVisibility(Spinner.GONE);
 
 //    	   	createFolderSelectionList();
@@ -663,6 +668,11 @@ public class ActivityMain extends AppCompatActivity {
 			case R.id.menu_top_quit:
 				handleCloseButtonPressed();
 				return true;
+
+            case R.id.menu_top_switch_folder_view:
+                switchFolderView();
+                return true;
+
 			case R.id.menu_top_log_management:
 				invokeLogManagement();
 				return true;
@@ -690,6 +700,20 @@ public class ActivityMain extends AppCompatActivity {
         }
 		return false;
 	};
+
+    private void switchFolderView() {
+        mGp.saveSettingOptionShowSimpleFolderView(mContext, !mGp.settingShowSimpleFolderView);
+
+        if (mGp.settingShowSimpleFolderView) mGp.folderGridView.setColumnWidth((int)CommonDialog.toPixel(mContext.getResources(), 156));
+        else mGp.folderGridView.setColumnWidth((int)CommonDialog.toPixel(mContext.getResources(), 250));
+
+        mGp.adapterFolderView=new AdapterFolderList(mActivity, mGp.masterFolderList, mGp.settingShowSimpleFolderView);
+        mGp.folderGridView.setAdapter(mGp.adapterFolderView);
+        mGp.adapterFolderView.setSortKey(mGp.folderListSortKey);
+        mGp.adapterFolderView.setSortOrder(mGp.folderListSortOrder);
+        mGp.adapterFolderView.notifyDataSetChanged();;
+
+    }
 
 //    public static String getFilePath(Context c, String cache_dir, Uri content_uri) {
 //        if (content_uri==null) return null;
@@ -1348,9 +1372,11 @@ public class ActivityMain extends AppCompatActivity {
 		mGp.thumbnailView.setBackgroundColor(Color.BLACK);//mGp.themeColorList.window_background_color_content);
 		mGp.thumbnailView.setVisibility(LinearLayout.GONE);
 		
-		mGp.folderGridView=(GridView)ll_folder.findViewById(R.id.main_view_folder_grid_view);
-		
-		mGp.adapterFolderView=new AdapterFolderList(mActivity, mGp.masterFolderList);
+        mGp.folderGridView=(GridView)ll_folder.findViewById(R.id.main_view_folder_grid_view);
+        if (mGp.settingShowSimpleFolderView) mGp.folderGridView.setColumnWidth((int)CommonDialog.toPixel(mContext.getResources(), 156));
+        else mGp.folderGridView.setColumnWidth((int)CommonDialog.toPixel(mContext.getResources(), 250));
+
+        mGp.adapterFolderView=new AdapterFolderList(mActivity, mGp.masterFolderList, mGp.settingShowSimpleFolderView);
 		mGp.folderGridView.setAdapter(mGp.adapterFolderView);
         mGp.folderGridView.setFastScrollEnabled(true);
 		mGp.adapterFolderView.setSortKey(mGp.folderListSortKey);

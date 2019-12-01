@@ -479,28 +479,29 @@ public class PictureListItem implements Externalizable, Comparable<PictureListIt
 	
 	public byte[] verifyAndCorrectThumbnail(byte[] thumbnail_array, String fp, String orientation) {
 		byte[] result=null;
-		if (thumbnail_array!=null) {
-			result=thumbnail_array;
-//			Log.v("","o="+orientation);
-			if (!orientation.equals(EXIF_IMAGE_ORIENTATION_NO_ROTATION)) {
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				Bitmap org_bitmap=BitmapFactory.decodeByteArray(thumbnail_array, 0, thumbnail_array.length, options);
-				Bitmap out_bitmap=PictureUtil.rotateBitmapByPictureOrientation(org_bitmap, orientation);
-				try {
-					ByteArrayOutputStream baos=new ByteArrayOutputStream();
-					out_bitmap.compress(CompressFormat.JPEG, 20, baos);
-					baos.flush();
-					baos.close();
-					result=baos.toByteArray();
-				} catch (IOException e) {
-//					e.printStackTrace();
-				}
-				out_bitmap.recycle();
-				org_bitmap.recycle();
-			}
-		} else {
-			result=PictureUtil.createImageByteArrayWithResize(mGp, debug_enabled, 512, 20, fp, orientation);
-		}
+        result=PictureUtil.createImageByteArrayWithResize(mGp, debug_enabled, 512, 30, fp, orientation);
+//		if (thumbnail_array!=null) {
+//			result=thumbnail_array;
+////			Log.v("","o="+orientation);
+//			if (!orientation.equals(EXIF_IMAGE_ORIENTATION_NO_ROTATION)) {
+//				BitmapFactory.Options options = new BitmapFactory.Options();
+//				Bitmap org_bitmap=BitmapFactory.decodeByteArray(thumbnail_array, 0, thumbnail_array.length, options);
+//				Bitmap out_bitmap=PictureUtil.rotateBitmapByPictureOrientation(org_bitmap, orientation);
+//				try {
+//					ByteArrayOutputStream baos=new ByteArrayOutputStream();
+//					out_bitmap.compress(CompressFormat.JPEG, 20, baos);
+//					baos.flush();
+//					baos.close();
+//					result=baos.toByteArray();
+//				} catch (IOException e) {
+////					e.printStackTrace();
+//				}
+//				out_bitmap.recycle();
+//				org_bitmap.recycle();
+//			}
+//		} else {
+//			result=PictureUtil.createImageByteArrayWithResize(mGp, debug_enabled, 512, 20, fp, orientation);
+//		}
 		setThumbnailVerified(true);
 		return result;
 	};

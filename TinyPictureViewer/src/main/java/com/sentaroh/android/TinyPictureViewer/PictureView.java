@@ -634,7 +634,7 @@ public class PictureView {
 				int pos=mGp.customViewPager.getCurrentItem();
 				String[] send_pic_fp=new String[]{mGp.adapterPictureView.getPictureWorkList().get(pos).image_file_path};
 				String emsg=CommonUtilities.sharePictures(mContext, send_pic_fp);
-				mCommonDlg.showCommonDialog(false, "E", "Action_Send error", emsg, null);
+				if (emsg!=null) mCommonDlg.showCommonDialog(false, "E", "Action_Send error", emsg, null);
 			}
 		});
 

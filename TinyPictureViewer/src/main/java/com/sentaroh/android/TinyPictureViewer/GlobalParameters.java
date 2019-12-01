@@ -212,7 +212,10 @@ public class GlobalParameters extends CommonGlobalParms {
 	
 	public boolean settingMaxBrightWhenImageShowed=true;
 //	public boolean settingPictureScreenWithoutNavigateButton=false;
-	
+
+    private static final String SHOW_SIMPLE_FOLDER_VIEW_KEY="show_simple_folder_view_key";
+    public boolean settingShowSimpleFolderView=false;
+
 	public String settingAutoFileChangeDetection=AUTO_FILE_CHANGE_DETECTION_ALWAYS;
 	
 	public boolean settingCameraFolderAlwayTop=true;
@@ -480,6 +483,8 @@ public class GlobalParameters extends CommonGlobalParms {
         else if (settingDebugLevel==2) log.setLogOption(true, true, true, true, true);
         else log.setLogOption(false, true, true, false, false);
 
+        settingShowSimpleFolderView=prefs.getBoolean(SHOW_SIMPLE_FOLDER_VIEW_KEY, false);
+
         loadScanFolderList(c);
 	};
 
@@ -496,7 +501,13 @@ public class GlobalParameters extends CommonGlobalParms {
 		folderListSortOrder=prefs.getInt(FOLDER_LIST_SORT_ORDER, 0);
 	};
 
-	public void saveScanFolderList(Context c) {
+    public void saveSettingOptionShowSimpleFolderView(Context c, boolean show_simple_folder_view) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        prefs.edit().putBoolean(SHOW_SIMPLE_FOLDER_VIEW_KEY, show_simple_folder_view).commit();
+        settingShowSimpleFolderView=show_simple_folder_view;
+    };
+
+    public void saveScanFolderList(Context c) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
 		String scan_list_value="", sep="";
 		for(ScanFolderItem sfi:settingScanDirectoryList) {

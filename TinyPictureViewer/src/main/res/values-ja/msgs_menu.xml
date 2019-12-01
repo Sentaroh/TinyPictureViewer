@@ -14,7 +14,10 @@
     
     <string name="msgs_menu_show_hidden_file_to_show">隠しディレクトリを表示する</string>
     <string name="msgs_menu_show_hidden_file_to_hide">隠しディレクトリを表示しない&#8230;</string>
-    
+
+    <string name="msgs_menu_show_folder_view_show_simple_view">簡易フォルダー表示</string>
+    <string name="msgs_menu_show_folder_view_show_standard_view">詳細フォルダー表示</string>
+
     <string name="msgs_menu_config_backup_restore">設定の保存・復元&#8230;</string>
 
     <string name="msgs_menu_show_sdcard_selector">SDCARD書込許可</string>

@@ -29,7 +29,11 @@
     <item android:id="@+id/menu_top_show_hide_hidden"
           android:title="@string/msgs_menu_show_hidden_file_to_show" 
           />
-    			
+
+    <item android:id="@+id/menu_top_switch_folder_view"
+        android:title="@string/msgs_menu_show_folder_view_show_simple_view"
+        />
+
     <item android:id="@+id/menu_top_log_management"
           android:title="@string/msgs_menu_log_management"
           />
