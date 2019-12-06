@@ -4046,6 +4046,7 @@ public class ActivityMain extends AppCompatActivity {
 //		pb_view.setBackgroundColor(Color.TRANSPARENT);
 		dialog.setCancelable(false);
 		dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setNavigationBarColor(Color.BLACK);
 		dialog.show();
 		return dialog;
 	};
