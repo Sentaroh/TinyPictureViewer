@@ -66,7 +66,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0000/00/00 00:00:00"
-                android:visibility="gone"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
             
             <TextView
