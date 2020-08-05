@@ -37,8 +37,11 @@ import java.util.ArrayList;
 
 import com.sentaroh.android.TinyPictureViewer.Log.LogUtil;
 import com.sentaroh.android.Utilities.Base64Compat;
+import com.sentaroh.android.Utilities.BuildConfig;
+import com.sentaroh.android.Utilities.Dialog.CommonDialog;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,16 +50,22 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.CheckedTextView;
 import android.widget.EdgeEffect;
+import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 public final class CommonUtilities {
 	private Context mContext=null;
@@ -101,7 +110,48 @@ public final class CommonUtilities {
 	    }
 	};
 
-	public static String getStackTraceElement(Exception e) {
+    static public void setButtonLabelListener(final Activity a, ImageButton ib, final String label) {
+        ib.setOnLongClickListener(new View.OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View v) {
+                Toast toast= CommonDialog.getToastShort(a, label);
+                positionToast(toast, v, a.getWindow(), 0, 0);
+                toast.show();
+                return true;
+            }
+        });
+    };
+
+    static public void positionToast(Toast toast, View view, Window window, int offsetX, int offsetY) {
+        // toasts are positioned relatively to decor view, views relatively to their parents, we have to gather additional data to have a common coordinate system
+        Rect rect = new Rect();
+        window.getDecorView().getWindowVisibleDisplayFrame(rect);
+        // covert anchor view absolute position to a position which is relative to decor view
+        int[] viewLocation = new int[2];
+        view.getLocationInWindow(viewLocation);
+        int viewLeft = viewLocation[0] - rect.left;
+        int viewTop = viewLocation[1] - rect.top;
+//        log.info("getX="+view.getX()+", getY="+view.getY());
+//        log.info("view_loc0="+viewLocation[0]+", view_loc1="+viewLocation[1]);
+//        log.info("rect_top="+rect.top+", rect_bottom="+rect.bottom+", rect_left="+rect.left+", rect_right="+rect.right);
+
+        // measure toast to center it relatively to the anchor view
+        DisplayMetrics metrics = new DisplayMetrics();
+        window.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(metrics.widthPixels, View.MeasureSpec.UNSPECIFIED);
+        int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(metrics.heightPixels, View.MeasureSpec.UNSPECIFIED);
+        toast.getView().measure(widthMeasureSpec, heightMeasureSpec);
+        int toastWidth = toast.getView().getMeasuredWidth();
+
+        // compute toast offsets
+//        int toastX = rect.left<0?(viewLocation[0]-toastWidth/3):(viewLeft + (view.getWidth() - toastWidth) / 2 + offsetX);
+        int toastX = viewLocation[0]-toastWidth/4;
+        int toastY = view.getHeight()*2;//viewTop + view.getHeight() + offsetY;
+//        log.info("x="+toastX+", y="+toastY+", left="+viewLeft+", top="+viewTop+", width="+view.getWidth()+", height="+view.getHeight()+", toastW="+toastWidth);
+        toast.setGravity(Gravity.LEFT | Gravity.BOTTOM, toastX, toastY);
+    }
+
+    public static String getStackTraceElement(Exception e) {
         final StringWriter sw = new StringWriter();
         final PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);

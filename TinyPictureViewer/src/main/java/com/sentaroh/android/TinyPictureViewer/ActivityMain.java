@@ -53,6 +53,7 @@ import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -69,6 +70,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -98,6 +100,7 @@ import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -2313,7 +2316,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonFolderExclude, mContext.getString(R.string.msgs_main_cont_label_exclude));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonFolderExclude, mContext.getString(R.string.msgs_main_cont_label_exclude));
 
         mGp.contextButtonFolderMediaFileScan.setOnClickListener(new OnClickListener(){
 			@Override
@@ -2325,7 +2328,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonFolderMediaFileScan, mContext.getString(R.string.msgs_main_cont_label_media_file_scan));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonFolderMediaFileScan, mContext.getString(R.string.msgs_main_cont_label_media_file_scan));
         
         mGp.contextButtonFolderAdd.setOnClickListener(new OnClickListener(){
 			@Override
@@ -2337,7 +2340,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonFolderAdd, mContext.getString(R.string.msgs_main_cont_label_add));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonFolderAdd, mContext.getString(R.string.msgs_main_cont_label_add));
 
         mGp.contextButtonFolderRename.setOnClickListener(new OnClickListener(){
 			@Override
@@ -2349,7 +2352,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonFolderRename, mContext.getString(R.string.msgs_main_cont_label_rename));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonFolderRename, mContext.getString(R.string.msgs_main_cont_label_rename));
 
         mGp.contextButtonFolderDelete.setOnClickListener(new OnClickListener(){
 			@Override
@@ -2361,7 +2364,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonFolderDelete, mContext.getString(R.string.msgs_main_cont_label_delete));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonFolderDelete, mContext.getString(R.string.msgs_main_cont_label_delete));
 
         mGp.contextButtonFolderSelectAll.setOnClickListener(new OnClickListener(){
 			@Override
@@ -2376,7 +2379,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonFolderSelectAll, mContext.getString(R.string.msgs_main_cont_label_select_all));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonFolderSelectAll, mContext.getString(R.string.msgs_main_cont_label_select_all));
 
         mGp.contextButtonFolderUnselectAll.setOnClickListener(new OnClickListener(){
 			@Override
@@ -2390,7 +2393,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonFolderUnselectAll, mContext.getString(R.string.msgs_main_cont_label_unselect_all));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonFolderUnselectAll, mContext.getString(R.string.msgs_main_cont_label_unselect_all));
 
 		mGp.folderGridView.setOnItemClickListener(new OnItemClickListener(){
 			@Override
@@ -3368,7 +3371,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonThumbnailShare, mContext.getString(R.string.msgs_main_cont_label_share));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonThumbnailShare, mContext.getString(R.string.msgs_main_cont_label_share));
 
         mGp.contextButtonThumbnailRename.setOnClickListener(new OnClickListener(){
 			@Override
@@ -3382,7 +3385,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonThumbnailRename, mContext.getString(R.string.msgs_main_cont_label_rename));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonThumbnailRename, mContext.getString(R.string.msgs_main_cont_label_rename));
 
         mGp.contextButtonThumbnailPaste.setOnClickListener(new OnClickListener(){
 			@Override
@@ -3394,7 +3397,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonThumbnailPaste, mContext.getString(R.string.msgs_main_cont_label_paste));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonThumbnailPaste, mContext.getString(R.string.msgs_main_cont_label_paste));
 
         mGp.contextButtonThumbnailCopy.setOnClickListener(new OnClickListener(){
 			@Override
@@ -3406,7 +3409,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonThumbnailCopy, mContext.getString(R.string.msgs_main_cont_label_copy));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonThumbnailCopy, mContext.getString(R.string.msgs_main_cont_label_copy));
 
         mGp.contextButtonThumbnailCut.setOnClickListener(new OnClickListener(){
 			@Override
@@ -3418,7 +3421,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonThumbnailCut, mContext.getString(R.string.msgs_main_cont_label_cut));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonThumbnailCut, mContext.getString(R.string.msgs_main_cont_label_cut));
 
         mGp.contextButtonThumbnailDelete.setOnClickListener(new OnClickListener(){
 			@Override
@@ -3430,7 +3433,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonThumbnailDelete, mContext.getString(R.string.msgs_main_cont_label_delete));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonThumbnailDelete, mContext.getString(R.string.msgs_main_cont_label_delete));
 
         mGp.contextButtonThumbnailSelectAll.setOnClickListener(new OnClickListener(){
 			@Override
@@ -3445,7 +3448,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonThumbnailSelectAll, mContext.getString(R.string.msgs_main_cont_label_select_all));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonThumbnailSelectAll, mContext.getString(R.string.msgs_main_cont_label_select_all));
 
         mGp.contextButtonThumbnailUnselectAll.setOnClickListener(new OnClickListener(){
 			@Override
@@ -3459,7 +3462,7 @@ public class ActivityMain extends AppCompatActivity {
 				}
 			}
         });
-        ContextButtonUtil.setButtonLabelListener(mContext, mGp.contextButtonThumbnailUnselectAll, mContext.getString(R.string.msgs_main_cont_label_unselect_all));
+        CommonUtilities.setButtonLabelListener(mActivity, mGp.contextButtonThumbnailUnselectAll, mContext.getString(R.string.msgs_main_cont_label_unselect_all));
 		
         mGp.thumbnailGridView.setOnItemClickListener(new OnItemClickListener(){
 			@Override
